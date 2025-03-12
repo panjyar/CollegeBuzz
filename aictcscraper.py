@@ -15,7 +15,7 @@ async def extract_notices_and_events():
                     {"name": "notice_title", "selector": "#tab1 a", "type": "text"},
                     {"name": "notice_url", "selector": "#tab1 a", "type": "attribute", "attribute": "href"},
                     {"name": "tender_title", "selector": "#tab2 a", "type": "text"},
-                    {"name": "notice_url", "selector": "#tab2 a", "type": "attribute", "attribute": "href"},
+                    {"name": "tender_url", "selector": "#tab2 a", "type": "attribute", "attribute": "href"},
                     {"name": "upcoming_Event_title", "selector": ".testimonial p a", "type": "text"},
                     {"name": "upcoming_Event_url", "selector": ".testimonial p a", "type": "attribute", "attribute": "href"},
                     {"name": "event_date", "selector": ".event-date li.font-18", "type": "text"},
@@ -33,7 +33,7 @@ async def extract_notices_and_events():
                     {"name": "notice_url", "selector": "a#ContentPlaceHolder1_Repeater_Announcement_hyprAnnmnt_0", "type": "attribute", "attribute": "href"},
                     {"name": "upcoming_Event_title", "selector": "a#ContentPlaceHolder1_Repeater_Events_EvnthlALb1_0", "type": "text"},
                     {"name": "upcoming_Event_url", "selector": "a#ContentPlaceHolder1_Repeater_Events_EvnthlALb1_0", "type": "attribute", "attribute": "href"},
-                    {"name": "event_date", "selector": ".d-flex.align-items-center.mb-3  p.mb-0 ", "type": "text"},
+                    {"name": "upcoming_event_date", "selector": ".d-flex.align-items-center.mb-3  p.mb-0 ", "type": "text"},
                 ]
             }
         },
@@ -45,8 +45,8 @@ async def extract_notices_and_events():
             "fields": [
                 {"name": "news", "selector": ".field-content a", "type": "text"},
                 {"name": "news_url", "selector": ".field-content a", "type": "attribute", "attribute": "href"},
-                {"name": "newsss", "selector": ".news-card-title", "type": "text"},
-                {"name": "newsss_url", "selector": ".news-card-more a", "type": "attribute", "attribute": "href"}
+                # {"name": "newsss", "selector": ".news-card-title", "type": "text"},
+                # {"name": "newsss_url", "selector": ".news-card-more a", "type": "attribute", "attribute": "href"}
             ]
         }
         }
@@ -56,14 +56,14 @@ async def extract_notices_and_events():
            "name": "IITG Notices and Events",
                "baseSelector": "#myTabContent .tab-pane ul li , div.bxslider.bx-nav-top > div.border-1px.border-left-theme-color-2-6px",
                 "fields": [
-                    {"name": "admission_title", "selector": "#tab1 a", "type": "text"},
+                    {"name": "admission", "selector": "#tab1 a", "type": "text"},
                     {"name": "admission_url", "selector": "#tab1 a", "type": "attribute", "attribute": "href"},
                     {"name": "recruitment_title", "selector": "#tab2 a", "type": "text"},
                     {"name": "recruitment_url", "selector": "#tab2 a", "type": "attribute", "attribute": "href"},
                     {"name": "upcoming_Event_title", "selector": ".testimonial p a", "type": "text"},
                     {"name": "upcoming_Event_url", "selector": ".testimonial p a", "type": "attribute", "attribute": "href"},
-                    {"name": "event_date", "selector": ".event-date li.font-18", "type": "text"},
-                    {"name": "event_year", "selector": ".event-date li.font-14", "type": "text"}
+                    {"name": "upcoming_event_date", "selector": ".event-date li.font-18", "type": "text"},
+                    {"name": "upcoming_event_year", "selector": ".event-date li.font-14", "type": "text"}
                 ]
         }
     },
@@ -88,22 +88,9 @@ async def extract_notices_and_events():
         "fields": [
             {"name" : "admission", "selector": ".col-lg-4 span a" , "type" : "text"},
             {"name" : "admission_url" , "selector" :".col-lg-8 p a" , "type" : "attribute" , "attribute" : "href"},
-            {
-                "name": "upcoming_event_date",
-                "selector": "span.fz18",
-                "type": "text"
-            },
-            {
-                "name": "upcoming_event_title",
-                "selector": "p.mb-0 span.w-75",
-                "type": "text"
-            },
-            {
-                "name": "upcoming_event_url",
-                "selector": "p.mb-0 span.text-right a",
-                "type": "attribute",
-                "attribute": "href"
-            }
+            {"name": "upcoming_event_date","selector": "span.fz18", "type": "text" },
+            {"name": "upcoming_event_title", "selector": "p.mb-0 span.w-75","type": "text"},
+            {"name": "upcoming_event_url","selector": "p.mb-0 span.text-right a","type": "attribute","attribute": "href"}
         ]
     }
 }
@@ -112,74 +99,28 @@ async def extract_notices_and_events():
     "url": "https://www.nitt.edu/",
     "schema": {
         "name": "NIT Trichy Updates",
-        "baseSelector": ".wpb_column.col-md-4",
+        "baseSelector": ".wpb_column.col-md-4 ul.list-unstyled li , div.author ", ## make for upcomming event
         "fields": [
-            {
-                "name": "section_title",
-                "selector": "h2.after",
-                "type": "text"
-            },
-            {
-                "name": "notices",
-                "selector": "ul.list-unstyled li",
-                "type": "nested_list",
-                "fields": [
-                    {
-                        "name": "title",
-                        "selector": "a",
-                        "type": "text"
-                    },
-                    {
-                        "name": "url",
-                        "selector": "a",
-                        "type": "attribute",
-                        "attribute": "href"
-                    },
-                    {
-                        "name": "is_new",
-                        "selector": "img[alt='NEW']",
-                        "type": "exists"
-                    },
-                    {
-                        "name": "target",
-                        "selector": "a",
-                        "type": "attribute",
-                        "attribute": "target"
-                    }
-                ]
-            }
+                {"name": "admission","selector": "a","type": "text"},
+                {"name": "admission_url","selector": "a","type": "attribute","attribute": "href"} ,
+                {"name": "upcoming_event_title", "selector": "h3.upcoming-header a", "type": "text"},
+                {"name": "upcoming_event_url", "selector": "h3.upcoming-header a", "type": "attribute", "attribute": "href"},
+                {"name": "upcoming_event_date", "selector": "figure.date", "type": "text"}
         ]
     }
-    },
+},
 
     {
     "url": "https://vit.ac.in/",
     "schema": {
         "name": "VIT News and Events",
-        "baseSelector": ".exad-nt-news ul li",
+        "baseSelector": ".exad-nt-news ul li, div.elementor-swiper div.elementor-testimonial div.event_listing.post-96677",
         "fields": [
-            {
-                "name": "title",
-                "selector": "a span p, a span",
-                "type": "text"
-            },
-            {
-                "name": "url",
-                "selector": "a",
-                "type": "attribute",
-                "attribute": "href"
-            },
-            {
-                "name": "target",
-                "selector": "a",
-                "type": "attribute",
-                "attribute": "target"
-            },
-            {
-                "name": "is_new",
-                "selector": "img[src*='new3.webp']",
-                "type": "exists"
-            }
+            {"name": "admission","selector": " li a span","type": "text"},
+            {"name": "admission_url","selector": "li a","type": "attribute","attribute": "href"},
+            {"name": "upcoming_event_title", "selector": "div.wpem-event-title h3", "type": "text"},
+            {"name": "upcoming_event_url", "selector": "a.wpem-event-action-url", "type": "attribute", "attribute": "href"},
+            {"name": "upcoming_event_date", "selector": "span.wpem-event-date-time-text", "type": "text"} 
         ]
     }
 }
@@ -206,27 +147,18 @@ async def extract_notices_and_events():
             for entry in data:
                 if "url" in entry:
                     entry["url"] = process_url(site["url"], entry["url"])
-            for entry in data:
                 if "news_url" in entry:
                     entry["news_url"] = process_url(site["url"], entry["news_url"])
-                if "url" in entry:  
-                    entry["url"] = process_url(site["url"], entry["url"])
-            for entry in data:
                 if "upcoming_Event_url" in entry:
                     entry["upcoming_Event_url"] = process_url(site["url"], entry["upcoming_Event_url"])
-                if "url" in entry:  
-                    entry["url"] = process_url(site["url"], entry["url"])
-            for entry in data:
                 if "recruitment_url" in entry:
                     entry["recruitment_url"] = process_url(site["url"], entry["recruitment_url"])
-                if "url" in entry:  
-                    entry["url"] = process_url(site["url"], entry["url"])
-            for entry in data:
                 if "research_url" in entry:
                     entry["research_url"] = process_url(site["url"], entry["research_url"])
-                if "url" in entry:  
-                    entry["url"] = process_url(site["url"], entry["url"])
-
+                if "admission_url" in entry:
+                    entry["admission_url"] = process_url(site["url"] , entry["admission_url"])
+            if site["url"] == "https://www.nitt.edu/":
+                     data = data[:10]
             
 
             print(f"Extracted {len(data)} notices and events from {site['url']}")
