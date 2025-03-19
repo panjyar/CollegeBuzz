@@ -22,8 +22,8 @@ async def extract_notices_and_events():
                     
                     {"name": "upcoming_Event_title", "selector": ".testimonial p a", "type": "text"},
                     {"name": "upcoming_Event_url", "selector": ".testimonial p a", "type": "attribute", "attribute": "href"},
-                    {"name": "upcoming_event_date", "selector": ".event-date li.font-18", "type": "text"},
-                    {"name": "upcoming_event_year", "selector": ".event-date li.font-14", "type": "text"}
+                    {"name": "upcoming_Event_date", "selector": ".event-date li.font-18", "type": "text"},
+                    {"name": "upcoming_Event_year", "selector": ".event-date li.font-14", "type": "text"}
                 ]
             }
         },
@@ -39,7 +39,7 @@ async def extract_notices_and_events():
                    
                     {"name": "upcoming_Event_title", "selector": "a#ContentPlaceHolder1_Repeater_Events_EvnthlALb1_0", "type": "text"},
                     {"name": "upcoming_Event_url", "selector": "a#ContentPlaceHolder1_Repeater_Events_EvnthlALb1_0", "type": "attribute", "attribute": "href"},
-                    {"name": "upcoming_event_date", "selector": ".d-flex.align-items-center.mb-3  p.mb-0 ", "type": "text"},
+                    {"name": "upcoming_Event_date", "selector": ".d-flex.align-items-center.mb-3  p.mb-0 ", "type": "text"},
                 ]
             }
         },
@@ -73,8 +73,8 @@ async def extract_notices_and_events():
                     
                     {"name": "upcoming_Event_title", "selector": ".testimonial p a", "type": "text"},
                     {"name": "upcoming_Event_url", "selector": ".testimonial p a", "type": "attribute", "attribute": "href"},
-                    {"name": "upcoming_event_date", "selector": ".event-date li.font-18", "type": "text"},
-                    {"name": "upcoming_event_year", "selector": ".event-date li.font-14", "type": "text"}
+                    {"name": "upcoming_Event_date", "selector": ".event-date li.font-18", "type": "text"},
+                    {"name": "upcoming_Event_year", "selector": ".event-date li.font-14", "type": "text"}
                 ]
         }
     },
@@ -103,9 +103,9 @@ async def extract_notices_and_events():
             {"name" : "admission", "selector": ".col-lg-4 span a" , "type" : "text"},
             {"name" : "admission_url" , "selector" :".col-lg-8 p a" , "type" : "attribute" , "attribute" : "href"},
            
-            {"name": "upcoming_event_date","selector": "span.fz18", "type": "text" },
-            {"name": "upcoming_event_title", "selector": "p.mb-0 span.w-75","type": "text"},
-            {"name": "upcoming_event_url","selector": "p.mb-0 span.text-right a","type": "attribute","attribute": "href"}
+            {"name": "upcoming_Event_date","selector": "span.fz18", "type": "text" },
+            {"name": "upcoming_Event_title", "selector": "p.mb-0 span.w-75","type": "text"},
+            {"name": "upcoming_Event_url","selector": "p.mb-0 span.text-right a","type": "attribute","attribute": "href"}
         ]
     }
     },
@@ -119,9 +119,9 @@ async def extract_notices_and_events():
                 {"name": "admission","selector": "a","type": "text"},
                 {"name": "admission_url","selector": "a","type": "attribute","attribute": "href"} ,
                 
-                {"name": "upcoming_event_title", "selector": "h3.upcoming-header a", "type": "text"},
-                {"name": "upcoming_event_url", "selector": "h3.upcoming-header a", "type": "attribute", "attribute": "href"},
-                {"name": "upcoming_event_date", "selector": "figure.date", "type": "text"}
+                {"name": "upcoming_Event_title", "selector": "h3.upcoming-header a", "type": "text"},
+                {"name": "upcoming_Event_url", "selector": "h3.upcoming-header a", "type": "attribute", "attribute": "href"},
+                {"name": "upcoming_Event_date", "selector": "figure.date", "type": "text"}
         ]
     }
     },
@@ -136,21 +136,28 @@ async def extract_notices_and_events():
             {"name": "admission","selector": " li a span","type": "text"},
             {"name": "admission_url","selector": "li a","type": "attribute","attribute": "href"},
            
-            {"name": "upcoming_event_title", "selector": "div.wpem-event-title h3", "type": "text"},
-            {"name": "upcoming_event_url", "selector": "a.wpem-event-action-url", "type": "attribute", "attribute": "href"},
-            {"name": "upcoming_event_date", "selector": "span.wpem-event-date-time-text", "type": "text"} 
+            {"name": "upcoming_Event_title", "selector": "div.wpem-event-title h3", "type": "text"},
+            {"name": "upcoming_Event_url", "selector": "a.wpem-event-action-url", "type": "attribute", "attribute": "href"},
+            {"name": "upcoming_Event_date", "selector": "span.wpem-event-date-time-text", "type": "text"} 
         ]
     }
     }
     ]
     
     def process_url(base_url, extracted_url):
-            if extracted_url and not extracted_url.startswith("http"):
-                return urljoin(base_url, extracted_url.strip())
-            return extracted_url
-    
+        if extracted_url and not extracted_url.startswith("http"):
+            return urljoin(base_url, extracted_url.strip())
+        return extracted_url
+
     mongo_handler = MongoDBHandler()
+
+    # Ensure required collections exist in MongoDB
+    required_collections = ["notices", "tenders", "upcoming_events", "recruitments", "admissions", "news", "research"]
     
+    for collection in required_collections:
+        mongo_handler.create_collection_if_not_exists(collection)
+        # Clear existing data from each collection before inserting new data
+        mongo_handler.clear_collection(collection)
 
     async with AsyncWebCrawler(verbose=True) as crawler:
         for site in urls:
@@ -165,6 +172,10 @@ async def extract_notices_and_events():
 
             data = json.loads(result.extracted_content)
 
+            # Apply filtering first
+            if site["url"] in ["https://www.nitt.edu/", "https://www.iitkgp.ac.in/"]:
+                data = data[:10]
+
             collections = {
                 "notices": [],
                 "tenders": [],
@@ -176,9 +187,12 @@ async def extract_notices_and_events():
             }
 
             for entry in data:
-                if "news_url" in entry:
-                    entry["news_url"] = process_url(site["url"], entry["news_url"])
-                    collections["news"].append(entry)
+                if "notice_url" in entry:
+                    entry["notice_url"] = process_url(site["url"], entry["notice_url"])
+                    collections["notices"].append(entry)
+                if "tender_url" in entry:
+                    entry["tender_url"] = process_url(site["url"], entry["tender_url"])
+                    collections["tenders"].append(entry)
                 if "upcoming_Event_url" in entry:
                     entry["upcoming_Event_url"] = process_url(site["url"], entry["upcoming_Event_url"])
                     collections["upcoming_events"].append(entry)
@@ -189,17 +203,19 @@ async def extract_notices_and_events():
                     entry["research_url"] = process_url(site["url"], entry["research_url"])
                     collections["research"].append(entry)
                 if "admission_url" in entry:
-                    entry["admission_url"] = process_url(site["url"] , entry["admission_url"])
+                    entry["admission_url"] = process_url(site["url"], entry["admission_url"])
                     collections["admissions"].append(entry)
-            if site["url"] == "https://www.nitt.edu/":
-                     data = data[:10]
-        
+                if "news_url" in entry:
+                    entry["news_url"] = process_url(site["url"], entry["news_url"])
+                    collections["news"].append(entry)
+
             print(f"Extracted {len(data)} notices and events from {site['url']}")
             print(json.dumps(data, indent=2) if data else "No data found")
 
+            # Insert into MongoDB without clearing again (already cleared at the beginning)
             for collection_name, records in collections.items():
-             if records:
-                mongo_handler.insert_data(collection_name , records)
+                if records:
+                    mongo_handler.insert_data(collection_name, records)
 
     mongo_handler.close_connection()
 

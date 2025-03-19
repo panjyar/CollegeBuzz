@@ -7,7 +7,7 @@ CORS(app)
 
 db_handler = MongoDBHandler()
 
-@app.route('/data', methods=['GET'])
+@app.route('/', methods=['GET'])
 def get_data():
     data = db_handler.fetch_all_data()
     return jsonify(data)

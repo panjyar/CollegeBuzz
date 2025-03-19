@@ -1,0 +1,98 @@
+/* Global Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f3f4f6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main App Container */
+.app-container {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Heading */
+.heading {
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Tabs Container */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Tab Buttons */
+.tab-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.tab-button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Content Box */
+.content-box {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Content List */
+.content-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.content-item {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+/* Content Link */
+.content-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.content-link:hover {
+  text-decoration: underline;
+}
+
+/* Content Date */
+.content-date {
+  font-size: 12px;
+  color: #666;
+}
+
+/* College Name (Colored Text) */
+.college-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: green; /* Change color here */
+}
+
+/* No Data Message */
+.no-data {
+  text-align: center;
+  color: #666;
+}
