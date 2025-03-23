@@ -1,8 +1,8 @@
 import React from "react";
 import { FaGraduationCap, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useAuth } from "../components/context.jsx";
-import "./Navbar.css";
+import { useAuth } from "../../context/AuthContext.jsx";
+import "../Layout/Navbar.css";
 
 const Navbar = ({ setActiveTab }) => {
   const { isAuthenticated, user, logout } = useAuth();

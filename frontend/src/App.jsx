@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "./index.css";
-import HomePage from "./components/HomePage.jsx";
-import Login from "./components/Login.jsx";
-import Register from "./components/Register.jsx";
-import { AuthProvider, useAuth } from "./components/context.jsx";
+import HomePage from "./pages/HomePage.jsx";
+import Login from "./pages/LoginPage.jsx";
+import Register from "./pages/RegisterPage.jsx";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 
 // CSS for the login-required message
 const appStyles = `
@@ -61,6 +61,24 @@ const appStyles = `
 .register-action:hover {
   background-color: #e9e9e9;
 }
+
+.search-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.search-input {
+  width: 50%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+}
 `;
 
 // Protected route component
@@ -79,23 +97,27 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const App = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <AuthProvider>
       <style>{appStyles}</style>
       <Router>
+        {/* 🔍 Search Bar */}
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search by college, event, research, or tender..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
+
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<HomePage />} />
-          {/* Add protected routes like this:
-          <Route 
-            path="/protected-page" 
-            element={
-              <ProtectedRoute>
-                <ProtectedComponent />
-              </ProtectedRoute>
-            } 
-          /> */}
+          <Route path="/" element={<HomePage searchQuery={searchQuery} />} />
         </Routes>
       </Router>
     </AuthProvider>

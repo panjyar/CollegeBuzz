@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaGraduationCap } from "react-icons/fa";
 import "./Register.css";
-import { useAuth } from "./context.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Register = () => {
   const [formData, setFormData] = useState({
