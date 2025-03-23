@@ -25,6 +25,10 @@ const collegeMapping = {
   "www.iitkgp.ac.in": "IIT Kharagpur",
   "www.nitt.edu": "NIT Trichy",
   "vit.ac.in": "VIT",
+  "www.ceed.iitb.ac.in": "IIT Bombay",
+  "www.uceed.iitb.ac.in": "IIT Bombay",
+  "www.scrs.in": "NIT Agartala",
+  "www.erp.iitkgp.ac.in": "IIT Kharagpur"
 };
 
 const getCollegeName = (url) => {

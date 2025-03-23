@@ -23,7 +23,7 @@ def token_required(f):
         except (jwt.InvalidTokenError, Exception) as e:
             return jsonify({'message': 'Invalid token'}), 401
             
-    return decorated
+    return decorated 
 
 def admin_required(f):
     @wraps(f)

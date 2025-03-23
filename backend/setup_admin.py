@@ -9,7 +9,7 @@ load_dotenv()
 
 # Get MongoDB connection
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/aicte_hub')
-DB_NAME = os.getenv('DB_NAME', 'aicte_hub')
+DB_NAME = os.getenv('DB_NAME', 'AICTE_Scraper')
 
 def setup_admin():
     # Connect to MongoDB

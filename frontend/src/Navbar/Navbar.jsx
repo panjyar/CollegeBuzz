@@ -17,7 +17,7 @@ const Navbar = ({ setActiveTab }) => {
     <nav className="navbar">
       <div className="navbar-brand">
         <FaGraduationCap className="logo" />
-        <span className="brand-text">AICTE Central Hub</span>
+        <a href="/" style={{ fontSize: "1.25rem", fontWeight: "800", marginBottom: "1rem" ,textDecoration: "None" , color: "whitesmoke"}} ><span className="brand-text">AICTE Central Hub</span></a>
       </div>
       <ul className="nav-links">
         <li><button onClick={() => setActiveTab("admissions")}>Admission</button></li>
