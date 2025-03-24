@@ -3,20 +3,34 @@ import { Clock } from "lucide-react";
 import { fieldMappings } from "../../utils/fieldMappings.js";
 import { getCollegeName } from "../../utils/collegeMapper.js";
 
-const ContentItem = ({ item, activeTab, index, totalItems }) => {
+const ContentItem = ({ item, activeTab, index, totalItems, searchTerm }) => {
   const collegeName = getCollegeName(item[fieldMappings[activeTab]?.link]);
   
   // Highlight text that matches the search query
-  const highlightMatch = (text, searchQuery) => {
-    if (!searchQuery || !text) return text;
+  const highlightMatch = (text, term) => {
+    if (!term || !text || typeof text !== 'string') return text;
     
-    const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
-    return parts.map((part, i) => 
-      part.toLowerCase() === searchQuery.toLowerCase() 
-        ? <span key={i} style={{ backgroundColor: "#fffbeb", fontWeight: "600" }}>{part}</span> 
-        : part
-    );
+    try {
+      const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      const parts = text.split(regex);
+      
+      return (
+        <>
+          {parts.map((part, i) => 
+            part.toLowerCase() === term.toLowerCase() 
+              ? <span key={i} style={{ backgroundColor: "#fffbeb", fontWeight: "600" }}>{part}</span> 
+              : part
+          )}
+        </>
+      );
+    } catch (e) {
+      // If regex fails, just return the original text
+      return text;
+    }
   };
+  
+  const title = item[fieldMappings[activeTab]?.title];
+  const date = item[fieldMappings[activeTab]?.date];
 
   return (
     <li className="content-item" style={{
@@ -31,16 +45,18 @@ const ContentItem = ({ item, activeTab, index, totalItems }) => {
         display: "block",
         marginBottom: "0.5rem"
       }}>
-        {item[fieldMappings[activeTab]?.title]}
+        {searchTerm ? highlightMatch(title, searchTerm) : title}
       </a>
-      {fieldMappings[activeTab]?.date && item[fieldMappings[activeTab]?.date] && (
+      
+      {fieldMappings[activeTab]?.date && date && (
         <div style={{ display: "flex", alignItems: "center", fontSize: "0.9rem", color: "#4b5563", marginBottom: "0.35rem" }}>
           <Clock size={14} style={{ marginRight: "0.35rem" }} />
-          <span>{item[fieldMappings[activeTab]?.date]}</span>
+          <span>{searchTerm ? highlightMatch(date, searchTerm) : date}</span>
         </div>
       )}
+      
       <p className="college-name" style={{ fontSize: "0.9rem", color: "#6b7280", margin: "0.25rem 0 0 0" }}>
-        {collegeName}
+        {searchTerm ? highlightMatch(collegeName, searchTerm) : collegeName}
       </p>
     </li>
   );

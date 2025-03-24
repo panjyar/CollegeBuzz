@@ -1,7 +1,7 @@
 import React from "react";
 import ContentItem from "../common/ContentItem.jsx";
 
-const TabContent = ({ data, activeTab }) => {
+const TabContent = ({ data, activeTab, searchTerm }) => {
   return (
     <div className="content-box" style={{
       backgroundColor: "white",
@@ -27,7 +27,8 @@ const TabContent = ({ data, activeTab }) => {
                 item={item} 
                 activeTab={activeTab} 
                 index={index} 
-                totalItems={data[activeTab].length} 
+                totalItems={data[activeTab].length}
+                searchTerm={searchTerm}
               />
             ))}
           </ul>
