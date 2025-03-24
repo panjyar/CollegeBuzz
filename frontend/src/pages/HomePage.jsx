@@ -8,13 +8,17 @@ import ResearchPapers from "../components/Home/ResearchPapers.jsx";
 import Tabs from "../components/UI/Tabs.jsx";
 import TabContent from "../components/Home/TabContent.jsx";
 import LoginRequired from "../components/Home/LoginRequired.jsx";
+import SearchBar from "../components/common/SearchBar.jsx";
 import { sampleEventsData } from "../utils/sampleData.js";
+import { getCollegeName } from "../utils/collegeMapper.js";
+import { fieldMappings } from "../utils/fieldMappings.js";
 
-const HomePage = ({ searchQuery }) => {
+const HomePage = () => {
   const [data, setData] = useState({});
   const [activeTab, setActiveTab] = useState("news");
   const [featuredEvents, setFeaturedEvents] = useState([]);
   const [featuredResearch, setFeaturedResearch] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -36,19 +40,58 @@ const HomePage = ({ searchQuery }) => {
     }
   }, [isAuthenticated]);
 
-  // 🔍 Filter Data Based on Search Query
-  const filterData = (items) => {
+  // Handle search
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  // Advanced filter function
+  const filterData = (items, tabKey) => {
     if (!searchQuery || !items) return items; // If no search query, return full list
 
     return items.filter((item) => {
-      const title = item.title?.toLowerCase() || "";
-      return title.includes(searchQuery.toLowerCase());
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      
+      // Get mappings for this tab
+      const mapping = fieldMappings[tabKey];
+      if (!mapping) return false;
+      
+      // Check title match
+      const title = item[mapping.title]?.toLowerCase() || "";
+      const titleMatch = title.includes(lowerCaseQuery);
+      
+      // Check college name match
+      const collegeLink = item[mapping.link];
+      const collegeName = getCollegeName(collegeLink)?.toLowerCase() || "";
+      const collegeMatch = collegeName.includes(lowerCaseQuery);
+      
+      // Check for category-specific keywords
+      const isTenderSearch = lowerCaseQuery.includes("tender");
+      const isAdmissionSearch = lowerCaseQuery.includes("admission");
+      const isNoticeSearch = lowerCaseQuery.includes("notice");
+      const isRecruitmentSearch = lowerCaseQuery.includes("recruitment");
+      
+      // Check if title contains any of these categories
+      const categoryMatch = 
+        (isTenderSearch && title.includes("tender")) ||
+        (isAdmissionSearch && title.includes("admission")) ||
+        (isNoticeSearch && title.includes("notice")) ||
+        (isRecruitmentSearch && title.includes("recruitment"));
+      
+      // Return true if any of the conditions match
+      return titleMatch || collegeMatch || categoryMatch;
     });
   };
 
+  // Create filtered data object for all tabs
+  const filteredData = Object.keys(data).reduce((acc, tabKey) => {
+    acc[tabKey] = filterData(data[tabKey], tabKey);
+    return acc;
+  }, {});
+
   // Filter featured sections
-  const filteredEvents = filterData(featuredEvents);
-  const filteredResearch = filterData(featuredResearch);
+  const filteredEvents = filterData(featuredEvents, "upcoming_events");
+  const filteredResearch = filterData(featuredResearch, "research");
 
   return (
     <Layout handleTabChange={setActiveTab}>
@@ -56,6 +99,9 @@ const HomePage = ({ searchQuery }) => {
 
       {isAuthenticated ? (
         <div className="main-content" style={{ padding: "0 2rem" }}>
+          {/* Search Bar */}
+          <SearchBar onSearch={handleSearch} />
+          
           {/* 🔹 Featured Sections */}
           <div className="featured-sections" style={{ display: "flex", flexDirection: "column", gap: "2rem", marginBottom: "2rem" }}>
             <UpcomingEvents events={filteredEvents} handleTabChange={setActiveTab} />
@@ -64,7 +110,31 @@ const HomePage = ({ searchQuery }) => {
 
           {/* 🔹 Tabs and Content */}
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-          <TabContent data={{ ...data, upcoming_events: filteredEvents, research: filteredResearch }} activeTab={activeTab} />
+          <TabContent 
+            data={{ 
+              ...filteredData, 
+              upcoming_events: filteredEvents, 
+              research: filteredResearch 
+            }} 
+            activeTab={activeTab} 
+          />
+          
+          {/* Show "No results" message if search is active but no results found */}
+          {searchQuery && Object.keys(filteredData).every(key => 
+            !filteredData[key] || filteredData[key].length === 0
+          ) && (
+            <div style={{ 
+              textAlign: "center", 
+              padding: "2rem", 
+              backgroundColor: "#f9fafb", 
+              borderRadius: "0.5rem",
+              margin: "1rem 0" 
+            }}>
+              <p style={{ color: "#6b7280", fontSize: "1.1rem" }}>
+                No results found for "{searchQuery}". Try a different search term.
+              </p>
+            </div>
+          )}
         </div>
       ) : (
         <LoginRequired />

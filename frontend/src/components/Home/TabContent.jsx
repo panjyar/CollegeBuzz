@@ -12,17 +12,26 @@ const TabContent = ({ data, activeTab }) => {
       border: "1px solid #e5e7eb"
     }}>
       {data[activeTab] && data[activeTab].length > 0 ? (
-        <ul className="content-list" style={{ listStyleType: "none", padding: 0, margin: 0 }}>
-          {data[activeTab].map((item, index) => (
-            <ContentItem 
-              key={index} 
-              item={item} 
-              activeTab={activeTab} 
-              index={index} 
-              totalItems={data[activeTab].length} 
-            />
-          ))}
-        </ul>
+        <>
+          {/* Optional: Show result count when filtered */}
+          {data[activeTab].length < (data[`original_${activeTab}`]?.length || Infinity) && (
+            <div style={{ marginBottom: "1rem", fontSize: "0.9rem", color: "#6b7280" }}>
+              Showing {data[activeTab].length} results
+            </div>
+          )}
+          
+          <ul className="content-list" style={{ listStyleType: "none", padding: 0, margin: 0 }}>
+            {data[activeTab].map((item, index) => (
+              <ContentItem 
+                key={index} 
+                item={item} 
+                activeTab={activeTab} 
+                index={index} 
+                totalItems={data[activeTab].length} 
+              />
+            ))}
+          </ul>
+        </>
       ) : (
         <p className="no-data" style={{ textAlign: "center", color: "#6b7280", padding: "2rem 0" }}>No data available.</p>
       )}

@@ -104,7 +104,7 @@ const App = () => {
       <style>{appStyles}</style>
       <Router>
         {/* 🔍 Search Bar */}
-        <div className="search-container">
+        {/* <div className="search-container">
           <input
             type="text"
             placeholder="Search by college, event, research, or tender..."
@@ -112,7 +112,7 @@ const App = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
           />
-        </div>
+        </div> */}
 
         <Routes>
           <Route path="/login" element={<Login />} />

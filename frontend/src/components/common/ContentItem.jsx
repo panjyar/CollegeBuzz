@@ -5,6 +5,18 @@ import { getCollegeName } from "../../utils/collegeMapper.js";
 
 const ContentItem = ({ item, activeTab, index, totalItems }) => {
   const collegeName = getCollegeName(item[fieldMappings[activeTab]?.link]);
+  
+  // Highlight text that matches the search query
+  const highlightMatch = (text, searchQuery) => {
+    if (!searchQuery || !text) return text;
+    
+    const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
+    return parts.map((part, i) => 
+      part.toLowerCase() === searchQuery.toLowerCase() 
+        ? <span key={i} style={{ backgroundColor: "#fffbeb", fontWeight: "600" }}>{part}</span> 
+        : part
+    );
+  };
 
   return (
     <li className="content-item" style={{
