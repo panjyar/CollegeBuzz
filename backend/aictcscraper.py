@@ -143,6 +143,8 @@ async def extract_notices_and_events():
     }
     }
     ]
+
+    
     
     def process_url(base_url, extracted_url):
         if extracted_url and not extracted_url.startswith("http"):
