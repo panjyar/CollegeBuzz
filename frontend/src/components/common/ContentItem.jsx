@@ -1,63 +1,119 @@
-import React from "react";
-import { Clock } from "lucide-react";
-import { fieldMappings } from "../../utils/fieldMappings.js";
-import { getCollegeName } from "../../utils/collegeMapper.js";
+import React from 'react';
+import { formatDate } from '../../utils/dateUtils';
 
 const ContentItem = ({ item, activeTab, index, totalItems, searchTerm }) => {
-  const collegeName = getCollegeName(item[fieldMappings[activeTab]?.link]);
-  
-  // Highlight text that matches the search query
-  const highlightMatch = (text, term) => {
-    if (!term || !text || typeof text !== 'string') return text;
-    
-    try {
-      const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-      const parts = text.split(regex);
-      
-      return (
-        <>
-          {parts.map((part, i) => 
-            part.toLowerCase() === term.toLowerCase() 
-              ? <span key={i} style={{ backgroundColor: "#fffbeb", fontWeight: "600" }}>{part}</span> 
-              : part
-          )}
-        </>
-      );
-    } catch (e) {
-      // If regex fails, just return the original text
-      return text;
+  // Ensure correct mapping for different tabs
+  const renderItemContent = () => {
+    switch(activeTab) {
+      case 'research':
+        return {
+          title: item.research || "No Title",
+          link: item.research_url || "#",
+          publishedAt: item.crawled_at || null
+        };
+
+      case 'tenders':
+        return {
+          title: item.tender_title || "No Title",
+          link: item.tender_url || "#",
+          publishedAt: item.crawled_at || null
+        };
+
+      case 'upcoming_events':
+        return {
+          title: item.upcoming_Event_title || "No Title",
+          link: item.upcoming_Event_url || "#",
+          publishedAt: item.crawled_at || null,
+          additionalInfo: `Date: ${item.upcoming_Event_date || "N/A"} ${item.upcoming_Event_year || ''}`
+        };
+
+      case 'admissions':
+        return {
+          title: item.admission || "No Title",
+          link: item.admission_url || "#",
+          publishedAt: item.crawled_at || null,
+        };
+
+      case 'news':
+        return {
+          title: item.news || "No Title",
+          link: item.news_url || "#",
+          publishedAt: item.crawled_at || null,
+        };
+
+      case 'notices':
+        return {
+          title: item.notice_title || "No Title",
+          link: item.notice_url || "#",
+          publishedAt: item.crawled_at || null,
+        };
+
+      case 'recruitments':
+        return {
+          title: item.recruitment_title || "No Title",
+          link: item.recruitment_url || "#",
+          publishedAt: item.crawled_at || null,
+        };
+
+      default:
+        return {
+          title: item.title || 'Untitled',
+          link: item.link || "#",
+          publishedAt: item.published_at || null
+        };
     }
   };
-  
-  const title = item[fieldMappings[activeTab]?.title];
-  const date = item[fieldMappings[activeTab]?.date];
+
+  const { title, link, publishedAt, additionalInfo } = renderItemContent();
 
   return (
-    <li className="content-item" style={{
-      padding: "1rem",
-      borderBottom: index < totalItems - 1 ? "1px solid #e5e7eb" : "none",
-      transition: "background-color 0.2s"
-    }}>
-      <a href={item[fieldMappings[activeTab]?.link]} target="_blank" rel="noopener noreferrer" className="content-link" style={{
-        color: "#1e40af",
-        textDecoration: "none",
-        fontWeight: "500",
-        display: "block",
-        marginBottom: "0.5rem"
-      }}>
-        {searchTerm ? highlightMatch(title, searchTerm) : title}
-      </a>
-      
-      {fieldMappings[activeTab]?.date && date && (
-        <div style={{ display: "flex", alignItems: "center", fontSize: "0.9rem", color: "#4b5563", marginBottom: "0.35rem" }}>
-          <Clock size={14} style={{ marginRight: "0.35rem" }} />
-          <span>{searchTerm ? highlightMatch(date, searchTerm) : date}</span>
+    <li 
+      style={{
+        borderBottom: index < totalItems - 1 ? '1px solid #e5e7eb' : 'none',
+        paddingBottom: '1rem',
+        marginBottom: '1rem'
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h3 style={{ margin: 0, marginBottom: '0.5rem', fontSize: '1rem', color: '#1f2937' }}>
+            {title}
+          </h3>
+          
+          {additionalInfo && (
+            <p style={{ margin: 0, marginBottom: '0.5rem', fontSize: '0.9rem', color: '#6b7280' }}>
+              {additionalInfo}
+            </p>
+          )}
+          
+          {publishedAt && (
+            <span style={{ fontSize: '0.8rem', color: '#9ca3af', marginBottom: '0.5rem', display: 'block' }}>
+              Published: {formatDate(publishedAt)}
+            </span>
+          )}
         </div>
-      )}
-      
-      <p className="college-name" style={{ fontSize: "0.9rem", color: "#6b7280", margin: "0.25rem 0 0 0" }}>
-        {searchTerm ? highlightMatch(collegeName, searchTerm) : collegeName}
-      </p>
+        
+        {link !== "#" && (
+          <a 
+            href={link} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{
+              backgroundColor: '#f3f4f6',
+              color: '#1f2937',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.375rem',
+              textDecoration: 'none',
+              fontSize: '0.9rem',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#e5e7eb'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+          >
+            View Details
+          </a>
+        )}
+      </div>
     </li>
   );
 };
