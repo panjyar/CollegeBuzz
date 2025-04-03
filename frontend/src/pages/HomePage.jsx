@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchActiveRecords } from "../services/apiServices.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import Layout from "../components/Layout/Layout.jsx";
 import HeroSection from "../components/Home/HeroSection.jsx";
@@ -9,9 +9,9 @@ import Tabs from "../components/UI/Tabs.jsx";
 import TabContent from "../components/Home/TabContent.jsx";
 import LoginRequired from "../components/Home/LoginRequired.jsx";
 import SearchBar from "../components/common/SearchBar.jsx";
-import { sampleEventsData } from "../utils/sampleData.js";
 import { getCollegeName } from "../utils/collegeMapper.js";
 import { fieldMappings } from "../utils/fieldMappings.js";
+import { isDateInRange } from "../utils/dateUtils.js";
 
 const HomePage = () => {
   const [data, setData] = useState({});
@@ -19,8 +19,8 @@ const HomePage = () => {
   const [featuredEvents, setFeaturedEvents] = useState([]);
   const [featuredResearch, setFeaturedResearch] = useState([]);
   const [searchFilters, setSearchFilters] = useState({
-    query: "", // For basic search
-    keyword: "", // For advanced search
+    query: "",
+    keyword: "",
     college: "",
     category: "",
     dateFrom: "",
@@ -29,30 +29,56 @@ const HomePage = () => {
   const [isAdvancedSearch, setIsAdvancedSearch] = useState(false);
   const { isAuthenticated } = useAuth();
 
+  // Collections to fetch
+  const collections = [
+    "news", "notices", "tenders", 
+    "upcoming_events", "recruitments", 
+    "admissions", "research"
+  ];
+
+  const [error, setError] = useState(null);
+
   useEffect(() => {
-    if (isAuthenticated) {
-      axios
-        .get("http://localhost:5000/")
-        .then((response) => {
-          setData(response.data);
+    const fetchData = async () => {
+      if (isAuthenticated) {
+        try {
+          const fetchedData = {};
+          for (const collection of collections) {
+            const records = await fetchActiveRecords(collection);
+            fetchedData[collection] = records;
+          }
 
-          // Store the original data for filtering purposes
-          const originalData = {};
-          Object.keys(response.data).forEach(key => {
-            originalData[`original_${key}`] = [...(response.data[key] || [])];
+          // Sort upcoming events by crawled_at date
+          const sortedEvents = fetchedData.upcoming_events || [];
+          sortedEvents.sort((a, b) => {
+            const dateA = a.crawled_at?.$date ? new Date(a.crawled_at.$date) : new Date(0);
+            const dateB = b.crawled_at?.$date ? new Date(b.crawled_at.$date) : new Date(0);
+            return dateB - dateA; // Sort in descending order (newest first)
           });
-          setData(prev => ({ ...prev, ...originalData }));
+          
+          // Limit to 5 most recent events for the featured section
+          setFeaturedEvents(sortedEvents.slice(0, 5));
 
-          // Set featured events from API or fallback to sample data
-          const eventData = response.data.upcoming_events || [];
-          setFeaturedEvents(eventData.length > 0 ? eventData.slice(0, 3) : sampleEventsData);
+          // Sort research papers by crawled_at date
+          const sortedResearch = fetchedData.research || [];
+          sortedResearch.sort((a, b) => {
+            const dateA = a.crawled_at?.$date ? new Date(a.crawled_at.$date) : new Date(0);
+            const dateB = b.crawled_at?.$date ? new Date(b.crawled_at.$date) : new Date(0);
+            return dateB - dateA;
+          });
+          
+          // Limit to 4 most recent research papers
+          setFeaturedResearch(sortedResearch.slice(0, 4));
 
-          // Set featured research from API
-          const researchData = response.data.research || [];
-          setFeaturedResearch(researchData.length > 0 ? researchData.slice(0, 4) : []);
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-    }
+          setData(fetchedData);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          setError(error);
+        }
+      }
+    };
+
+    fetchData();
   }, [isAuthenticated]);
 
   // Handle search
@@ -78,28 +104,6 @@ const HomePage = () => {
     }
   };
 
-  // Checks if a date string is within the specified range
-  const isDateInRange = (dateStr, fromDate, toDate) => {
-    if (!dateStr) return true; // If no date provided, consider it a match
-    if (!fromDate && !toDate) return true; // If no date range specified, consider it a match
-    
-    const date = new Date(dateStr);
-    
-    if (fromDate && toDate) {
-      const from = new Date(fromDate);
-      const to = new Date(toDate);
-      return date >= from && date <= to;
-    } else if (fromDate) {
-      const from = new Date(fromDate);
-      return date >= from;
-    } else if (toDate) {
-      const to = new Date(toDate);
-      return date <= to;
-    }
-    
-    return true;
-  };
-
   // Advanced filter function
   const filterData = (items, tabKey) => {
     if (!items) return [];
@@ -118,20 +122,20 @@ const HomePage = () => {
         if (!query) return true;
         
         // Check title match
-        const title = item[mapping.title]?.toLowerCase() || "";
+        const title = item.title?.toLowerCase() || "";
         const titleMatch = title.includes(query);
         
         // Check date match (if it looks like a date)
-        const dateStr = item[mapping.date];
+        const dateStr = item.published_at;
         const dateMatch = dateStr?.toLowerCase().includes(query);
         
         // Check college name match
-        const collegeLink = item[mapping.link];
+        const collegeLink = item.link;
         const collegeName = getCollegeName(collegeLink)?.toLowerCase() || "";
         const collegeMatch = collegeName.includes(query);
         
         // Check content match if available
-        const content = item[mapping.content]?.toLowerCase() || "";
+        const content = item.description?.toLowerCase() || "";
         const contentMatch = content.includes(query);
         
         // Check for category-specific keywords
@@ -161,8 +165,8 @@ const HomePage = () => {
         // Check keyword in title and content
         if (searchFilters.keyword) {
           const keyword = searchFilters.keyword.toLowerCase();
-          const title = item[mapping.title]?.toLowerCase() || "";
-          const content = item[mapping.content]?.toLowerCase() || "";
+          const title = item.title?.toLowerCase() || "";
+          const content = item.description?.toLowerCase() || "";
           
           if (!title.includes(keyword) && !content.includes(keyword)) {
             matches = false;
@@ -172,7 +176,7 @@ const HomePage = () => {
         // Check college name
         if (searchFilters.college && matches) {
           const collegeFilter = searchFilters.college.toLowerCase();
-          const collegeLink = item[mapping.link];
+          const collegeLink = item.link;
           const collegeName = getCollegeName(collegeLink)?.toLowerCase() || "";
           
           if (!collegeName.includes(collegeFilter)) {
@@ -184,7 +188,7 @@ const HomePage = () => {
         if (searchFilters.category && matches) {
           // For category, check if the current tab matches or if the title contains the category
           const categoryFilter = searchFilters.category.toLowerCase();
-          const title = item[mapping.title]?.toLowerCase() || "";
+          const title = item.title?.toLowerCase() || "";
           const isTabMatch = (
             (categoryFilter === "tender" && tabKey === "tenders") ||
             (categoryFilter === "admission" && tabKey === "admissions") ||
@@ -203,7 +207,7 @@ const HomePage = () => {
         
         // Check date range
         if ((searchFilters.dateFrom || searchFilters.dateTo) && matches) {
-          const dateStr = item[mapping.date];
+          const dateStr = item.published_at;
           if (!isDateInRange(dateStr, searchFilters.dateFrom, searchFilters.dateTo)) {
             matches = false;
           }
@@ -216,7 +220,6 @@ const HomePage = () => {
 
   // Create filtered data object for all tabs
   const filteredData = Object.keys(data)
-    .filter(key => !key.startsWith('original_')) // Skip original data copies
     .reduce((acc, tabKey) => {
       acc[tabKey] = filterData(data[tabKey], tabKey);
       return acc;
@@ -309,19 +312,15 @@ const HomePage = () => {
           )}
           
           {/* 🔹 Featured Sections */}
-          <div className="featured-sections" style={{ display: "flex", flexDirection: "column", gap: "2rem", marginBottom: "2rem" }}>
-            <UpcomingEvents events={filteredEvents} handleTabChange={setActiveTab} />
+          <div className="featured-sections" style={{ display: "flex", flexDirection: "row", gap: "2rem", marginBottom: "2rem" }}>
+            <UpcomingEvents events={filteredEvents} handleTabChange={setActiveTab} showFeatured={true} />
             <ResearchPapers papers={filteredResearch} handleTabChange={setActiveTab} />
           </div>
 
           {/* 🔹 Tabs and Content */}
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
           <TabContent 
-            data={{ 
-              ...filteredData, 
-              upcoming_events: filteredEvents, 
-              research: filteredResearch 
-            }} 
+            data={filteredData}
             activeTab={activeTab}
             searchTerm={isAdvancedSearch ? searchFilters.keyword : searchFilters.query} 
           />
@@ -347,6 +346,19 @@ const HomePage = () => {
                   <li>Use partial college names instead of full names</li>
                 </ul>
               </div>
+            </div>
+          )}
+          
+          {error && (
+            <div className="error-message" style={{
+              padding: "1rem",
+              backgroundColor: "#fee2e2",
+              color: "#b91c1c",
+              borderRadius: "0.375rem",
+              margin: "1rem 0"
+            }}>
+              Failed to load data. Please try again later.
+              {error.message && <p>{error.message}</p>}
             </div>
           )}
         </div>
