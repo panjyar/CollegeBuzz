@@ -62,7 +62,7 @@ class MongoDBHandler:
 
     def insert_data(self, collection_name, records):
         """
-        Insert records with archiving logic
+        Insert records with archiving logic and preserving original crawl date
         """
         current_time = datetime.now()
         
@@ -71,10 +71,51 @@ class MongoDBHandler:
         archived_collection = self.db[f"{collection_name}_archived"]
         
         for record in records:
-            # Add crawl timestamp
-            record['crawled_at'] = current_time
+            # Create a unique identifier for each record to check if it already exists
+            # Using title and URL as they're typically unique for web content
+            unique_identifier = {}
             
-            # Try to extract event date
+            if 'title' in record:
+                unique_identifier['title'] = record['title']
+            if 'url' in record:
+                unique_identifier['url'] = record['url']
+            
+            # If no unique identifiers found, use the entire record
+            if not unique_identifier:
+                unique_identifier = record.copy()
+                if 'crawled_at' in unique_identifier:
+                    del unique_identifier['crawled_at']
+            
+             # Add the first crawl timestamp if it's a new record
+        existing_record = active_collection.find_one(unique_identifier)
+        if existing_record:
+            # Record exists, preserve the original crawl date
+            record['crawled_at'] = existing_record.get('crawled_at')  # Keep original crawl date
+            record['last_updated_at'] = current_time  # Update last updated timestamp
+            
+            # Update the existing record
+            active_collection.update_one(
+                unique_identifier, 
+                {"$set": record}
+            )
+        else:
+            # Check if it exists in the archived collection
+            existing_archived = archived_collection.find_one(unique_identifier)
+            if existing_archived:
+                # It exists in archives, preserve original crawl date
+                record['crawled_at'] = existing_archived.get('crawled_at')
+                record['last_updated_at'] = current_time
+                
+                # Decide which collection to update based on event date
+                # (rest of your logic for deciding collection)
+            else:
+                # It's a completely new record
+                record['crawled_at'] = current_time  # First time we're seeing this
+                record['last_updated_at'] = current_time  # Also updated now
+                
+                # Insert into appropriate collection
+                # (rest of your logic for deciding collection)
+                    # Try to extract event date
             event_date = None
             date_fields = [
                 'upcoming_Event_date', 'notice_date', 
@@ -89,11 +130,33 @@ class MongoDBHandler:
             
             # Determine collection based on date
             if event_date and event_date < current_time.date():
-                # Move to archived collection if event date is in the past
-                archived_collection.insert_one(record)
+                # Check if this record already exists in archived collection
+                existing = archived_collection.find_one(unique_identifier)
+                if existing:
+                    # Update existing archived record
+                    archived_collection.update_one(
+                        unique_identifier, 
+                        {"$set": record}
+                    )
+                else:
+                    # Move to archived collection if event date is in the past
+                    # First check if it exists in active collection and remove it
+                    active_record = active_collection.find_one(unique_identifier)
+                    if active_record:
+                        active_collection.delete_one(unique_identifier)
+                    archived_collection.insert_one(record)
             else:
-                # Insert into active collection
-                active_collection.insert_one(record)
+                # Check if record exists in active collection
+                existing = active_collection.find_one(unique_identifier)
+                if existing:
+                    # Update existing active record
+                    active_collection.update_one(
+                        unique_identifier, 
+                        {"$set": record}
+                    )
+                else:
+                    # Insert into active collection
+                    active_collection.insert_one(record)
 
     def get_active_records(self, collection_name, limit=50):
         """
