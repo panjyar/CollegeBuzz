@@ -8,6 +8,23 @@ from mongodb_handler import MongoDBHandler
 async def extract_notices_and_events():
     urls = [
         {
+    "url": "https://www.iitr.ac.in/",
+    "schema": {
+        "name": "IIT Madras Announcements",
+        "baseSelector": "div.ui.half-width-container > div.first.light-blue > div.ui.slider > div.ui.image-card , div.second > div.ui.list > div.listItem > div.event-item",
+        "fields": [
+           
+            {"name": "upcoming_Event_title", "selector": "div.info > div.ui.sub-heading", "type": "text"},
+            {"name": "upcoming_Event_url", "selector": "div.event-item", "type": "attribute", "attribute": "href"},
+            {"name": "upcoming_Event_date", "selector": "div.info > div.ui.one-liner-captions", "type": "text"},
+            # {"name": "upcoming_Event_year", "selector": ".event-date li.font-14", "type": "text"}
+           
+            {"name": "research", "selector": ".ui.sub-heading", "type": "text"},
+            {"name": "research_url", "selector": "a.ui.button", "type": "attribute", "attribute": "href"}
+        ] 
+    }
+    },
+        {
             "url": "https://www.cit.ac.in",
             "schema": {
                 "name": "CIT Notices and Events",
