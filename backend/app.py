@@ -27,7 +27,7 @@ def home():
         "available_collections": collections
     })
 
-@app.route('/api/active/<collection_name>', methods=['GET'])
+@app.route('/api/active/<string:collection_name>', methods=['GET'])
 def get_active_records(collection_name):
     """
     Retrieve active records for a specific collection
@@ -48,7 +48,7 @@ def get_active_records(collection_name):
     records = db_handler.get_active_records(collection_name, limit)
     return jsonify(convert_mongo_to_json(records))
 
-@app.route('/api/archived/<collection_name>', methods=['GET'])
+@app.route('/api/archived/<string:collection_name>', methods=['GET'])
 def get_archived_records(collection_name):
     """
     Retrieve archived records for a specific collection
