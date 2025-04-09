@@ -176,7 +176,7 @@ async def extract_notices_and_events():
     for collection in required_collections:
         mongo_handler.create_collection_if_not_exists(collection)
         # Clear existing data from each collection before inserting new data
-        mongo_handler.clear_collection(collection)
+        # mongo_handler.clear_collection(collection)
 
     async with AsyncWebCrawler(verbose=True) as crawler:
         for site in urls:
