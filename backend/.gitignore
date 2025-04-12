@@ -1,0 +1,34 @@
+# 🐍 Python cache and bytecode files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 📦 Virtual environment
+env/
+venv/
+myenv/
+ENV/
+.env
+
+# 📄 Environment variables
+.env
+
+# 🔧 VS Code settings (optional)
+.vscode/
+
+# 📋 Logs and temp files
+*.log
+*.sqlite3
+*.db
+.DS_Store
+
+# 🐍 Pip install record
+pip-log.txt
+
+# 🧪 Testing cache
+.coverage
+.tox/
+.pytest_cache/
+
+# 🐘 MongoDB dump files (if any)
+dump/

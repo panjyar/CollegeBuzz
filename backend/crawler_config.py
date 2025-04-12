@@ -118,7 +118,7 @@ urls = [
         "multiple": True
       },
       {
-        "name": "upcoming_Event_date",
+        "name": "upcoming_Event_month",
         "selector": "td:last-child p time strong",
         "type": "text",
         "multiple": True
