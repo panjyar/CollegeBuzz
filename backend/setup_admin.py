@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get MongoDB connection
-MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/aicte_hub')
+MONGO_URI = os.getenv('MONGO_URI', 'mongodb+srv://pradip1:MT9RUPG9Kq9s3Rp7@cluster0.awebuxe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 DB_NAME = os.getenv('DB_NAME', 'AICTE_Scraper')
 
 def setup_admin():
