@@ -3,12 +3,20 @@ from datetime import datetime, timedelta
 import re
 
 class MongoDBHandler:
-    def __init__(self, db_name="AICTE_Scraper", host="localhost", port=27017):
+    def __init__(self, db_name="AICTE_Scraper", uri=None):
         try:
-            self.client = MongoClient(host, port, serverSelectionTimeoutMS=5000)
+            # Use MongoDB URI from environment if provided, else fallback to localhost
+            if uri:
+                self.client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+            else:
+                self.client = MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=5000)
+            
+            # Test connection
+            self.client.server_info()
+
             self.db = self.client[db_name]
             
-            # Define collections for active and archived data
+            # Define active and archived collections
             self.active_collections = [
                 "notices", "tenders", "upcoming_events", 
                 "recruitments", "admissions", "news", "research"
@@ -21,9 +29,10 @@ class MongoDBHandler:
             
             # Fetch collection names dynamically
             self.collections = self.db.list_collection_names()
-            print("Connected to MongoDB successfully!")
+            print("✅ Connected to MongoDB successfully!")
+
         except Exception as e:
-            print(f"Error connecting to MongoDB: {e}")
+            print(f"❌ Error connecting to MongoDB: {e}")
     
     def create_collection_if_not_exists(self, collection_name):
         if collection_name not in self.db.list_collection_names():
