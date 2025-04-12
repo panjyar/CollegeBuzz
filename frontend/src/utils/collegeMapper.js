@@ -10,7 +10,8 @@ export const collegeMapping = {
     "www.ceed.iitb.ac.in": "IIT Bombay",
     "www.uceed.iitb.ac.in": "IIT Bombay",
     "www.scrs.in": "NIT Agartala",
-    "https://erp.iitkgp.ac.in/": "IIT Kharagpur"
+    "https://erp.iitkgp.ac.in": "IIT Kharagpur",
+    "https://neindiabroadcast.com/": "NE India"
   };
   
   export const getCollegeName = (url) => {

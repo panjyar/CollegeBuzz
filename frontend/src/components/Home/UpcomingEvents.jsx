@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { fetchActiveRecords, fetchArchivedRecords } from "../../services/apiServices.js";
 import EventCard from "./EventCard.jsx";
+import { handleViewAll } from "../../utils/navigationUtils.js";
+import { sortUpcomingEvents, removeDuplicates } from "../../utils/sortingUtils.js";
 
 const UpcomingEvents = ({ events, handleTabChange, showFeatured = false }) => {
   const [recentEvents, setRecentEvents] = useState([]);
@@ -24,30 +26,16 @@ const UpcomingEvents = ({ events, handleTabChange, showFeatured = false }) => {
         let recentEventsData = await fetchActiveRecords("upcoming_events");
         let archivedEventsData = await fetchArchivedRecords("upcoming_events");
 
-        // Remove redundant (duplicate) events using a Set
-        const uniqueRecentEvents = Array.from(
-          new Map(recentEventsData.map((event) => [event.upcoming_Event_title, event])).values()
-        );
+        // Remove duplicates
+        const uniqueRecentEvents = removeDuplicates(recentEventsData, "upcoming_Event_title");
+        const uniqueArchivedEvents = removeDuplicates(archivedEventsData, "upcoming_Event_title");
 
-        const uniqueArchivedEvents = Array.from(
-          new Map(archivedEventsData.map((event) => [event.upcoming_Event_title, event])).values()
-        );
+        // Sort events with our custom function
+        const sortedRecentEvents = sortUpcomingEvents(uniqueRecentEvents);
+        const sortedArchivedEvents = sortUpcomingEvents(uniqueArchivedEvents);
 
-        // Sort events by crawled date (newest first)
-        uniqueRecentEvents.sort((a, b) => {
-          const dateA = a.crawled_at?.$date ? new Date(a.crawled_at.$date) : new Date(0);
-          const dateB = b.crawled_at?.$date ? new Date(b.crawled_at.$date) : new Date(0);
-          return dateB - dateA;
-        });
-        
-        uniqueArchivedEvents.sort((a, b) => {
-          const dateA = a.crawled_at?.$date ? new Date(a.crawled_at.$date) : new Date(0);
-          const dateB = b.crawled_at?.$date ? new Date(b.crawled_at.$date) : new Date(0);
-          return dateB - dateA;
-        });
-
-        setRecentEvents(uniqueRecentEvents);
-        setArchivedEvents(uniqueArchivedEvents);
+        setRecentEvents(sortedRecentEvents);
+        setArchivedEvents(sortedArchivedEvents);
         setIsLoading(false);
       } catch (err) {
         console.error("Error fetching events:", err);
@@ -60,16 +48,7 @@ const UpcomingEvents = ({ events, handleTabChange, showFeatured = false }) => {
   }, [events, showFeatured]);
 
   const handleViewAllEvents = () => {
-    if (handleTabChange) {
-      handleTabChange("upcoming_events");
-      // Scroll to the tab content section
-      setTimeout(() => {
-        const tabContentElement = document.querySelector(".content-box");
-        if (tabContentElement) {
-          tabContentElement.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 100);
-    }
+    handleViewAll(handleTabChange, "upcoming_events");
   };
 
   if (isLoading) {
@@ -113,14 +92,13 @@ const UpcomingEvents = ({ events, handleTabChange, showFeatured = false }) => {
           <p>No upcoming events found.</p>
         ) : (
           <div>
-            {recentEvents.map((event, index) => (
-              <div key={event._id?.$oid || index} style={{ marginBottom: index < recentEvents.length - 1 ? "1rem" : "0" }}>
+            {recentEvents.slice(0, 5).map((event, index) => (
+              <div key={event._id?.$oid || index} style={{ marginBottom: index < Math.min(recentEvents.length, 5) - 1 ? "1rem" : "0" }}>
                 <EventCard 
                   event={{
                     title: event.upcoming_Event_title,
                     date: event.upcoming_Event_date + " " + (event.upcoming_Event_year || ""),
                     url: event.upcoming_Event_url,
-                    // In the featured section (modify this part):
                     crawledAt: event.crawled_at?.$date || event.crawled_at
                   }}
                 />

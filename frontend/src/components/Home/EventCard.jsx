@@ -42,7 +42,7 @@ const EventCard = ({ event }) => {
           fontSize: "0.9rem",
           color: isArchived ? "#9ca3af" : "#4b5563"
         }}>
-          {date}
+          Event on: {date}
         </span>
         
         {crawledAt && (
@@ -50,7 +50,7 @@ const EventCard = ({ event }) => {
             fontSize: "0.8rem",
             color: "#9ca3af"
           }}>
-            Crawled: {formatDate(crawledAt)}
+            Published on: {formatDate(crawledAt)}
           </span>
         )}
       </div>

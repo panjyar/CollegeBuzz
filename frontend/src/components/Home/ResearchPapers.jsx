@@ -1,8 +1,14 @@
 import React from "react";
 import ResearchCard from "./ResearchCard.jsx";
+import { handleViewAll } from "../../utils/navigationUtils.js";
 
 const ResearchPapers = ({ papers, handleTabChange }) => {
   if (!papers || papers.length === 0) return null;
+  
+  const handleViewAllResearch = (e) => {
+    e.preventDefault();
+    handleViewAll(handleTabChange, "research");
+  };
   
   return (
     <div className="research-section" style={{
@@ -23,10 +29,7 @@ const ResearchPapers = ({ papers, handleTabChange }) => {
         Recent Research Papers
         <a 
           href="#" 
-          onClick={(e) => {
-            e.preventDefault();
-            handleTabChange("research");
-          }}
+          onClick={handleViewAllResearch}
           style={{
             fontSize: "1rem",
             color: "#1e40af",

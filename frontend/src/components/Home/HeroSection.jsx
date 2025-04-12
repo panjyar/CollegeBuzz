@@ -3,7 +3,7 @@ import React from "react";
 const HeroSection = ({ isAuthenticated }) => {
   return (
     <div className="hero-section" style={{
-      backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://s6.imgcdn.dev/YjiZa9.jpg')",
+      backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://i.ibb.co/xS68nvLK/img2.jpg')",
       backgroundSize: "cover",
       backgroundPosition: "center",
       color: "white",

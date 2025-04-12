@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./index.css";
 import HomePage from "./pages/HomePage.jsx";
 import Login from "./pages/LoginPage.jsx";
@@ -102,7 +102,7 @@ const App = () => {
   return (
     <AuthProvider>
       <style>{appStyles}</style>
-      <Router>
+      
         {/* 🔍 Search Bar */}
         {/* <div className="search-container">
           <input
@@ -119,7 +119,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<HomePage searchQuery={searchQuery} />} />
         </Routes>
-      </Router>
+      
     </AuthProvider>
   );
 };

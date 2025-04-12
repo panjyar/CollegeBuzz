@@ -1,5 +1,7 @@
 import React from 'react';
 import { formatDate } from '../../utils/dateUtils';
+import { fieldMappings } from '../../utils/fieldMappings';
+import { getCollegeName } from '../../utils/collegeMapper.js';
 
 const ContentItem = ({ item, activeTab, index, totalItems, searchTerm }) => {
   // Ensure correct mapping for different tabs
@@ -24,7 +26,7 @@ const ContentItem = ({ item, activeTab, index, totalItems, searchTerm }) => {
           title: item.upcoming_Event_title || "No Title",
           link: item.upcoming_Event_url || "#",
           publishedAt: item.crawled_at || null,
-          additionalInfo: `Date: ${item.upcoming_Event_date || "N/A"} ${item.upcoming_Event_year || ''}`
+          additionalInfo: `Event on: ${item.upcoming_Event_date || "N/A"} ${item.upcoming_Event_year || ''}`
         };
 
       case 'admissions':
@@ -65,6 +67,9 @@ const ContentItem = ({ item, activeTab, index, totalItems, searchTerm }) => {
   };
 
   const { title, link, publishedAt, additionalInfo } = renderItemContent();
+  
+  // Get college name based on URL
+  const collegeName = getCollegeName(link);
 
   return (
     <li 
@@ -80,6 +85,11 @@ const ContentItem = ({ item, activeTab, index, totalItems, searchTerm }) => {
             {title}
           </h3>
           
+          {/* Add college name display */}
+          <p style={{ margin: 0, marginBottom: '0.5rem', fontSize: '0.9rem', color: '#6b7280' }}>
+            Published by: {collegeName}
+          </p>
+          
           {additionalInfo && (
             <p style={{ margin: 0, marginBottom: '0.5rem', fontSize: '0.9rem', color: '#6b7280' }}>
               {additionalInfo}
@@ -88,7 +98,7 @@ const ContentItem = ({ item, activeTab, index, totalItems, searchTerm }) => {
           
           {publishedAt && (
             <span style={{ fontSize: '0.8rem', color: '#9ca3af', marginBottom: '0.5rem', display: 'block' }}>
-              Published: {formatDate(publishedAt)}
+              Published on: {formatDate(publishedAt)}
             </span>
           )}
         </div>

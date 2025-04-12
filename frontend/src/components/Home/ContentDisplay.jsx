@@ -15,7 +15,7 @@ const ContentDisplay = () => {
       try {
         setLoading(true);
         // Replace with your actual API endpoint
-        const response = await fetch('your-api-endpoint');
+        const response = await fetch('http://127.0.0.1:5000/api/active');
         
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -63,7 +63,7 @@ const ContentDisplay = () => {
 
   return (
     <div className="content-display">
-      <SearchBar onSearch={handleSearch} />
+      {/* <SearchBar onSearch={handleSearch} /> */}
       
       {filteredData.length === 0 ? (
         <div className="no-results">No results found. Try a different search term.</div>
