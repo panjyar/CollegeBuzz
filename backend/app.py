@@ -109,7 +109,6 @@ def serve_react(path):
     else:
         return send_from_directory(app.static_folder, 'index.html')
 
-
 if __name__ == '__main__':
-    # For production use a WSGI server like Gunicorn (don't use Flask's dev server)
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)), debug=False)
+    port = int(os.environ.get('PORT', 5000))  # use Render's port if available
+    app.run(debug=False, host='0.0.0.0', port=port)
