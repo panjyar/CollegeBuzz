@@ -8,8 +8,8 @@ class MongoDBHandler:
             # Use MongoDB URI from environment if provided, else fallback to localhost
             if uri:
                 self.client = MongoClient(uri, serverSelectionTimeoutMS=5000)
-            else:
-                self.client = MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=5000)
+            # else:
+            #     self.client = MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=5000)
             
             # Test connection
             self.client.server_info()

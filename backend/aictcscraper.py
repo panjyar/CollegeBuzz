@@ -1,15 +1,18 @@
 import json
 import asyncio
 import re
+import os
 from urllib.parse import urljoin
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
 from crawl4ai.extraction_strategy import JsonCssExtractionStrategy
 from mongodb_handler import MongoDBHandler
 from crawler_config import urls
+from dotenv import load_dotenv
+load_dotenv()
 
 async def extract_notices_and_events():
     # Initialize MongoDB handler and collections
-    mongo_handler = MongoDBHandler()
+    mongo_handler = MongoDBHandler(uri=os.environ.get("MONGO_URI"))
     collection_types = ["notices", "tenders", "upcoming_events", "recruitments", "admissions", "news", "research"]
     
     # Create collections if they don't exist
@@ -36,7 +39,7 @@ async def extract_notices_and_events():
                 # Apply site-specific filtering
                 if site["url"] in ["https://www.nitt.edu/", "https://www.iitkgp.ac.in/"]:
                     data = data[:10]
-                elif site["url"] == "https://www.iitk.ac.in/":
+                elif site["url"] in ["https://www.iitk.ac.in/", "https://www.iiti.ac.in/"]:
                     data = data[:4]
                 
                 # Special case handling for IIT Roorkee

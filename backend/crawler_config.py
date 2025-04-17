@@ -1,23 +1,59 @@
 # crawler_config.py
 # IIT Kanpur , IIT BHU , IIT Hyderabad , IIT Mandi , IIT Patna , IIT Gandhinagar , IIT Jodhpur , IIT Indore , IIT Ropar , IIT Bhubnaneswar , IIT Tirupati , IIT Bhilai , IIT Dharwad , IIT Goa , IIT Jammu , IIT Palakakd , IIT 
 urls = [
+    
+  {
+  "url": "https://www.iitbbs.ac.in/",
+  "schema": {
+    "name": "IIT Bhubaneswar Information",
+    "baseSelector": "div.elementor-column, section.elementor-section",
+    "fields": [
+      # Admission related announcements
+      {"name": "admission", "selector": "div.elementor-element-7f2e9d6 article.elementor-post.category-admission-news h3.elementor-post__title a", "type": "text", "multiple": True},
+      {"name": "admission_url", "selector": "div.elementor-element-7f2e9d6 article.elementor-post.category-admission-news h3.elementor-post__title a", "type": "attribute", "attribute": "href", "multiple": True},
+      
+      # # Research Section - Adjust selectors to better target the slide elements
+      # {"name": "research", "selector": "section#research .elementor-carousel-image-overlay.e-overlay-animation-fade", "type": "text", "multiple": True},
+      # {"name": "research_url", "selector": "section#research .swiper-slide a", "type": "attribute", "attribute": "href", "multiple": True},
+      
+      # Upcoming Events/Seminars/Workshops - Using section ID
+      {"name": "upcoming_Event_title", "selector": "section#campusbulletin h6.elementor-heading-title a", "type": "text", "multiple": True},
+      {"name": "upcoming_Event_url", "selector": "section#campusbulletin h6.elementor-heading-title a", "type": "attribute", "attribute": "href", "multiple": True},
+    ]
+  }
+},
     {
+    "url": "https://www.iiti.ac.in/",
+    "schema": {
+      "name": "IIT Indore Events",
+      "baseSelector": "div.tz-event-container div.tz-event-wrapper div.tz-event-style-4:not(.news)",
+      "fields": [
+        {"name": "upcoming_Event_title", "selector": "div.tz-content-event-item p", "type": "text", "multiple": True},
+        {"name": "upcoming_Event_date", "selector": "div.tz-content-event-item strong", "type": "text", "multiple": True},
+        {"name": "upcoming_Event_url", "selector": "div.tz-content-event-item div.anchorread a", "type": "attribute", "attribute": "href", "multiple": True}
+      ]
+    }
+  },
+  {
+    "url": "https://www.iiti.ac.in/",
+    "schema": {
+      "name": "IIT Indore News",
+      "baseSelector": "div.tz-event-container div.tz-event-wrapper div.tz-event-style-4.news",
+      "fields": [
+        {"name": "news", "selector": "div.tz-content-event-item p", "type": "text", "multiple": True},
+        {"name": "news_url", "selector": "div.newsdetails a", "type": "attribute", "attribute": "href", "multiple": True}
+      ]
+    }
+  }
+    
+    ,{
   "url": "https://iitj.ac.in/",
   "schema": {
     "name": "IIT Jodhpur Admission Information",
     "baseSelector": "div.container-fluid div.row marquee",
     "fields": [
-      {
-        "name": "admission",
-        "selector": "a",
-        "type": "text",
-      },
-      {
-        "name": "admission_url",
-        "selector": "a",
-        "type": "attribute",
-        "attribute": "href",
-      }
+      {"name": "admission","selector": "a","type": "text",},
+      {"name": "admission_url","selector": "a","type": "attribute","attribute": "href",}
     ]
   }
 },
@@ -27,19 +63,8 @@ urls = [
     "name": "IIT Jodhpur Research Highlights",
     "baseSelector": "div#gallryTab3 div.module-border-wrap div.tab-content div.tab-pane div.row div.padleft-right",
     "fields": [
-      {
-        "name": "research",
-        "selector": "div a span",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "research_url",
-        "selector": "div a",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      }
+      {"name": "research","selector": "div a span","type": "text","multiple": True},
+      {"name": "research_url","selector": "div a","type": "attribute","attribute": "href","multiple": True}
     ]
   }
 },
@@ -49,25 +74,8 @@ urls = [
     "name": "IIT Jodhpur News",
     "baseSelector": "div#newsTab3 div.module-border-wrap div.tab-content div.tab-pane div.mydivs marquee div div.row",
     "fields": [
-      {
-        "name": "news",
-        "selector": "div.col-lg-8 p b a span",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "news_url",
-        "selector": "div.col-lg-8 p b a",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      }
-    #   {
-    #     "name": "news_title",
-    #     "selector": "div.col-lg-8 p:nth-of-type(2)",
-    #     "type": "text",
-    #     "multiple": True
-    #   },
+      {"name": "news","selector": "div.col-lg-8 p b a span","type": "text","multiple": True},
+      {"name": "news_url","selector": "div.col-lg-8 p b a","type": "attribute","attribute": "href","multiple": True}
     ]
   }
 },
@@ -77,19 +85,8 @@ urls = [
     "name": "IIT Jodhpur Announcements",
     "baseSelector": "div#latestTab3 div.module-border-wrap div.tab-content div.tab-pane table tr",
     "fields": [
-      {
-        "name": "admission",
-        "selector": "td:last-child a",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "admission_url",
-        "selector": "td:last-child a:nth-child(1)",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      }
+      {"name": "admission","selector": "td:last-child a","type": "text","multiple": True},
+      {"name": "admission_url","selector": "td:last-child a:nth-child(1)","type": "attribute","attribute": "href","multiple": True}
     ]
   }
 },{
@@ -98,37 +95,11 @@ urls = [
     "name": "IIT Jodhpur Events",
     "baseSelector": "div#newsTab3 div.module-border-wrap div.tab-content div.tab-pane div.mydivs1 div div.row table tr",
     "fields": [
-      {
-        "name": "upcoming_Event_title",
-        "selector": "td:first-child span a:last-child",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "upcoming_Event_url",
-        "selector": "td:first-child span a:last-child",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      },
-      {
-        "name": "upcoming_Event_year",
-        "selector": "td:last-child p time em",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "upcoming_Event_month",
-        "selector": "td:last-child p time strong",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "upcoming_Event_date",
-        "selector": "td:last-child p time span",
-        "type": "text",
-        "multiple": True
-      }
+      {"name": "upcoming_Event_title","selector": "td:first-child span a:last-child","type": "text","multiple": True},
+      {"name": "upcoming_Event_url","selector": "td:first-child span a:last-child","type": "attribute","attribute": "href","multiple": True},
+      {"name": "upcoming_Event_year","selector": "td:last-child p time em","type": "text","multiple": True},
+      {"name": "upcoming_Event_month","selector": "td:last-child p time strong","type": "text","multiple": True},
+      {"name": "upcoming_Event_date","selector": "td:last-child p time span","type": "text","multiple": True}
     ]
   }
 }

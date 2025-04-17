@@ -4,6 +4,9 @@ from mongodb_handler import MongoDBHandler
 from bson import json_util
 import json
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Import your scraper
 from aictcscraper import extract_notices_and_events
@@ -11,7 +14,8 @@ from aictcscraper import extract_notices_and_events
 app = Flask(__name__, static_folder='../frontend/dist', static_url_path='/')
 CORS(app)
 
-db_handler = MongoDBHandler()
+db_handler = MongoDBHandler(uri=os.environ.get("MONGO_URI"))
+
 
 def convert_mongo_to_json(mongo_data):
     """Convert MongoDB documents to JSON-serializable format"""
