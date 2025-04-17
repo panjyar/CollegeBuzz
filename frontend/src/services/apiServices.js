@@ -1,7 +1,7 @@
 // src/services/apiService.js
 import axios from 'axios';
 
-const BASE_URL = 'mongodb+srv://pradip1:MT9RUPG9Kq9s3Rp7@cluster0.awebuxe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const BASE_URL = 'http://localhost:5000/api';
 
 export const fetchActiveRecords = async (collection, limit = 50) => {
   try {
