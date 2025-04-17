@@ -1,7 +1,7 @@
 // src/services/apiService.js
 import axios from 'axios';
 
-const BASE_URL = 'https://newsbuzz-backend.onrender.com/api';
+const BASE_URL = 'https://collegebuzz-backend-lto9.onrender.com/api';
 
 export const fetchActiveRecords = async (collection, limit = 50) => {
   try {

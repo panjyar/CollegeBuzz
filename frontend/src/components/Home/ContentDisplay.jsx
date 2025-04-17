@@ -15,7 +15,7 @@ const ContentDisplay = () => {
       try {
         setLoading(true);
         // Replace with your actual API endpoint
-        const response = await fetch('https://newsbuzz-backend.onrender.com/api/active');
+        const response = await fetch('https://collegebuzz-backend-lto9.onrender.com/api/active');
         
         if (!response.ok) {
           throw new Error('Network response was not ok');
