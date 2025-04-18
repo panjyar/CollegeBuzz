@@ -313,18 +313,29 @@ class MongoDBHandler:
         """
         Retrieve active records from a collection
         """
-        if collection_name not in self.collections:
-            print(f"Collection '{collection_name}' does not exist.")
+        # First check if the collection exists in the database (don't rely on self.collections)
+        current_collections = self.db.list_collection_names()
+        print(f"Available collections: {current_collections}")
+        
+        if collection_name not in current_collections:
+            print(f"Collection '{collection_name}' does not exist in the database.")
             return []
-            
+        
         active_collection = self.db[collection_name]
+        
+        # Check how many documents are in the collection
+        doc_count = active_collection.count_documents({})
+        print(f"Found {doc_count} documents in '{collection_name}' collection")
         
         # Default sort by last updated, most recent first
         sort_field = sort_by if sort_by else "last_updated_at"
         sort_direction = -1  # Descending order (newest first)
         
         try:
-            return list(active_collection.find().sort(sort_field, sort_direction).limit(limit))
+            # Get the results as a list so we can see how many documents were returned
+            results = list(active_collection.find().sort(sort_field, sort_direction).limit(limit))
+            print(f"Returning {len(results)} records from '{collection_name}'")
+            return results
         except Exception as e:
             print(f"Error retrieving records from '{collection_name}': {e}")
             return []
