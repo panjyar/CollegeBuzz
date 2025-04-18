@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from mongodb_handler import MongoDBHandler
 from bson import json_util
+from aictcscraper import extract_notices_and_events
 import json
 import os
 from dotenv import load_dotenv
@@ -25,9 +26,14 @@ if not mongo_uri:
 
 # Connect to MongoDB
 db_handler = MongoDBHandler(uri=mongo_uri)
+try:
+    print("Running initial scrape to populate data...")
+    extract_notices_and_events()
+    print("Initial scraping completed")
+except Exception as e:
+    logger.exception(f"Initial scraping failed: {e}")
 
-# Import the scraper logic
-from aictcscraper import extract_notices_and_events
+
 
 
 def convert_mongo_to_json(mongo_data):
@@ -85,8 +91,7 @@ def get_archived_records(collection_name):
     records = db_handler.get_archived_records(collection_name, limit)
     return jsonify(convert_mongo_to_json(records))
 
-
-@app.route('/api/scrape', methods=['POST'])
+@app.route('/api/scrape', methods=['GET', 'POST'])
 def run_scraper():
     """Run the scraper manually (optional)"""
     try:

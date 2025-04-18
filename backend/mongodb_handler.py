@@ -8,8 +8,6 @@ class MongoDBHandler:
             # Use MongoDB URI from environment if provided, else fallback to localhost
             if uri:
                 self.client = MongoClient(uri, serverSelectionTimeoutMS=5000)
-            # else:
-            #     self.client = MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=5000)
             
             # Test connection
             self.client.server_info()
@@ -22,13 +20,18 @@ class MongoDBHandler:
                 "recruitments", "admissions", "news", "research"
             ]
             
-            # Create archived collections if they don't exist
+            # Create BOTH active and archived collections if they don't exist
             for collection in self.active_collections:
+                # Create active collection
+                self.create_collection_if_not_exists(collection)
+                
+                # Create archived collection
                 archived_collection = f"{collection}_archived"
                 self.create_collection_if_not_exists(archived_collection)
             
             # Fetch collection names dynamically
             self.collections = self.db.list_collection_names()
+            print(f"Available collections: {self.collections}")
             print("✅ Connected to MongoDB successfully!")
 
         except Exception as e:
