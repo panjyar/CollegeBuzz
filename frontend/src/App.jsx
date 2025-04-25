@@ -1,12 +1,8 @@
 import React, { useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
 import "./index.css";
-import HomePage from "./pages/HomePage.jsx";
-import Login from "./pages/LoginPage.jsx";
-import Register from "./pages/RegisterPage.jsx";
-import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
+import { useAuth } from "./context/AuthContext.jsx";
 
-// CSS for the login-required message
+// CSS for the app
 const appStyles = `
 .login-required-message {
   text-align: center;
@@ -81,46 +77,29 @@ const appStyles = `
 }
 `;
 
-// Protected route component
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
-  
-  if (loading) {
-    return <div className="loading-container">Loading...</div>;
-  }
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-  
-  return children;
-};
-
 const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { isAuthenticated, loading } = useAuth();
 
+  // This is now just a wrapper component
+  // All routes are defined in main.jsx
   return (
-    <AuthProvider>
+    <>
       <style>{appStyles}</style>
       
-        {/* 🔍 Search Bar */}
-        {/* <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search by college, event, research, or tender..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-        </div> */}
-
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<HomePage searchQuery={searchQuery} />} />
-        </Routes>
+      {/* Search Bar (uncomment if needed) */}
+      {/* <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search by college, event, research, or tender..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+      </div> */}
       
-    </AuthProvider>
+      {/* The routes are now in main.jsx */}
+    </>
   );
 };
 
