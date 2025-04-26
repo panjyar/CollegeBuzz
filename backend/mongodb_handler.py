@@ -312,11 +312,11 @@ class MongoDBHandler:
         
         print(f"Total records archived: {total_archived}")
 
-    def get_active_records(self, collection_name, limit=50, sort_by=None):
+    def get_active_records(self, collection_name, limit=1000, sort_by=None):
         """
         Retrieve active records from a collection
         """
-        # First check if the collection exists in the database (don't rely on self.collections)
+        # First check if the collection exists in the database
         current_collections = self.db.list_collection_names()
         print(f"Available collections: {current_collections}")
         
@@ -330,20 +330,41 @@ class MongoDBHandler:
         doc_count = active_collection.count_documents({})
         print(f"Found {doc_count} documents in '{collection_name}' collection")
         
+        # Get a sample document to check its structure
+        sample_doc = active_collection.find_one()
+        if sample_doc:
+            print(f"Sample document fields: {list(sample_doc.keys())}")
+        
         # Default sort by last updated, most recent first
         sort_field = sort_by if sort_by else "last_updated_at"
+        
+        # Check if all documents have the sort field
+        missing_sort_field = active_collection.count_documents({sort_field: {"$exists": False}})
+        if missing_sort_field > 0:
+            print(f"Warning: {missing_sort_field} documents are missing the '{sort_field}' field")
+        
         sort_direction = -1  # Descending order (newest first)
         
         try:
-            # Get the results as a list so we can see how many documents were returned
+            # Try without sorting first to see if that's the issue
+            results_no_sort = list(active_collection.find().limit(limit))
+            print(f"Without sorting: found {len(results_no_sort)} records")
+            
+            # Now try with sorting
             results = list(active_collection.find().sort(sort_field, sort_direction).limit(limit))
-            print(f"Returning {len(results)} records from '{collection_name}'")
+            print(f"With sorting: returning {len(results)} records from '{collection_name}'")
             return results
         except Exception as e:
             print(f"Error retrieving records from '{collection_name}': {e}")
-            return []
+            # Try without sorting if there was an error
+            try:
+                results = list(active_collection.find().limit(limit))
+                print(f"Fallback without sorting: returning {len(results)} records")
+                return results
+            except:
+                return []
 
-    def get_archived_records(self, collection_name, limit=50, sort_by=None):
+    def get_archived_records(self, collection_name, limit=1000, sort_by=None):
         """
         Retrieve archived records from a collection
         """

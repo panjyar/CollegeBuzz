@@ -25,7 +25,6 @@ db_handler = MongoDBHandler(uri=mongo_uri)
 
 try:
     print("Running initial scrape to populate data...")
-    asyncio.run(extract_notices_and_events())
     print("Initial scraping completed")
 except Exception as e:
     logger.exception(f"Initial scraping failed: {e}")
@@ -76,6 +75,18 @@ def run_scraper():
     except Exception as e:
         logger.exception("Scraping failed.")
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/test', methods=['GET'])
+def test_db():
+    try:
+        # Try to get one document from any collection
+        for collection_name in db_handler.db.list_collection_names():
+            doc = db_handler.db[collection_name].find_one()
+            if doc:
+                return jsonify({"status": "success", "data": convert_mongo_to_json(doc)})
+        return jsonify({"status": "warning", "message": "Connected to database but no documents found"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
