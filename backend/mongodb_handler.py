@@ -1,3 +1,4 @@
+from http import client
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import re
@@ -32,8 +33,7 @@ class MongoDBHandler:
             # Fetch collection names dynamically
             self.collections = self.db.list_collection_names()
             print(f"Available collections: {self.collections}")
-            print("✅ Connected to MongoDB successfully!")
-
+            print(f"Connected to MongoDB: {self.client.list_database_names()}")
         except Exception as e:
             print(f"❌ Error connecting to MongoDB: {e}")
     

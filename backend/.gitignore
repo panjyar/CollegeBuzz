@@ -32,3 +32,7 @@ pip-log.txt
 
 # 🐘 MongoDB dump files (if any)
 dump/
+
+myenv/
+__pycache__/
+.vercel
