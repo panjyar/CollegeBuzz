@@ -2,6 +2,262 @@
 # IIT Kanpur , IIT BHU , IIT Hyderabad , IIT Mandi , IIT Patna , IIT Gandhinagar , IIT Jodhpur , IIT Indore , IIT Ropar , IIT Bhubnaneswar , IIT Tirupati , IIT Bhilai , IIT Dharwad , IIT Goa , IIT Jammu , IIT Palakakd , IIT 
 urls = [
     
+
+     {
+  "url": "https://www.iitgoa.ac.in/",
+  "schema": {
+    "name": "IIT Goa Information",
+    "baseSelector": "div.row", 
+    "fields": [
+      {
+        "name": "admission",
+        "selector": "div.row center span a",
+        "type": "text"
+      },
+      {
+        "name": "admission_url",
+        "selector": "div.row center span a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+      {
+        "name": "news",
+        "selector": "div[style*='background-color: rgb(0 104 146)'] p a",
+        "type": "text"
+      },
+      {
+        "name": "news_url",
+        "selector": "div[style*='background-color: rgb(0 104 146)'] p a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+      {
+        "name": "news",
+        "selector": "div[style*='height:300px; background-color:white; overflow-y:auto;padding:10px'] p a",
+        "type": "text"
+      },
+      {
+        "name": "news_url",
+        "selector": "div[style*='height:300px; background-color:white; overflow-y:auto;padding:10px'] p a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+      {
+        "name": "research",
+        "selector": "div.col-sm-4:nth-child(2) div[style*='height:300px; background-color:white;'] p a",
+        "type": "text"
+      },
+      {
+        "name": "research_url",
+        "selector": "div.col-sm-4:nth-child(2) div[style*='height:300px; background-color:white;'] p a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+      {
+        "name": "upcoming_Event_title",
+        "selector": "div[style*='background-color:#cccccc;padding: 20px;height:300px;'] p a",
+        "type": "text"
+      },
+      {
+        "name": "upcoming_Event_url",
+        "selector": "div[style*='background-color:#cccccc;padding: 20px;height:300px;'] p a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+      {
+        "name": "admssion",
+        "selector": "div[style*='padding: 10px; border:1px solid #cccccc;background-color:white;font-size:15px;'] marquee a",
+        "type": "text"
+      },
+      {
+        "name": "admission_url",
+        "selector": "div[style*='padding: 10px; border:1px solid #cccccc;background-color:white;font-size:15px;'] marquee a",
+        "type": "attribute",
+        "attribute": "href"
+      }
+    ]
+  }
+},
+    {
+  "url": "https://iitdh.ac.in/",
+  "schema": {
+    "name": "IIT Dharwad Information",
+    "baseSelector": "#block-base-homepageannouncements div.body ul li, #block-base-views-block-news-block-1 div.view-wrapper > div , div#block-base-views-block-events-block-3 div.view-wrapper > div , div#block-base-views-block-gallery-block-1 .view-wrapper > div",
+    "fields": [
+      {
+        "name": "recruitment_title",
+        "selector": "div.body ul li a",
+        "type": "text",
+        "multiple": True
+      },
+      {
+        "name": "recruitment_url",
+        "selector": "div.body ul li a",
+        "type": "attribute",
+        "attribute": "href",
+        "multiple": True
+      },
+      {
+        "name": "news_title",
+        "selector": "div.views-field-title .title a",
+        "type": "text",
+        "multiple": True
+      },
+      {
+        "name": "news_url",
+        "selector": "div.views-field-title .title a",
+        "type": "attribute",
+        "attribute": "href",
+        "multiple": True
+      },
+      {
+        "name": "news",
+        "selector": "div.views-field-title .title a",
+        "type": "text",
+        "multiple": True
+      },
+      {
+        "name": "news_url",
+        "selector": "div.views-field-title .title a",
+        "type": "attribute",
+        "attribute": "href",
+        "multiple": True
+      },
+      {
+        "name": "upcoming_event_title",
+        "selector": "div.views-field-title .title a",
+        "type": "text",
+        "multiple": True
+      },
+      {
+        "name": "upcoming_event_url",
+        "selector": "div.views-field-title .title a",
+        "type": "attribute",
+        "attribute": "href",
+        "multiple": True
+      },
+      {
+          "name": "upcoming_Event_date",
+          "selector": ".views-field-field-date-ran .field_date_ran",
+          "type": "text",
+          "multiple": True
+      }
+    ]
+  }
+}
+
+    ,
+    {
+  "url": "https://www.iitbhilai.ac.in/",
+  "schema": {
+    "name": "IIT Bhilai Information",
+    "baseSelector": "div.well.welltheme li , div.well.wellpaleyellow ul li, div.col-md-8 div.row div.col-md-11.col-sm-11.col-xs-11",
+    "fields": [
+      {
+        "name": "news_title",
+        "selector": "div.well.welltheme li a b",
+        "type": "text"
+      },
+      {
+        "name": "news_url",
+        "selector": "div.well.welltheme li a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+      {
+        "name": "upcoming_Event_title",
+        "selector": "div.well.wellpaleyellow ul li a",
+        "type": "text",
+        "multiple": True
+      },
+      {
+        "name": "upcoming_Event_url",
+        "selector": "div.well.wellpaleyellow ul li a",
+        "type": "attribute",
+        "attribute": "href",
+        "multiple": True
+      },
+      {
+        "name": "research",
+        "selector": "div.col-md-8 div.row div.col-md-11.col-sm-11.col-xs-11 a",
+        "type": "text",
+        "multiple": True
+      },
+      {
+        "name": "research_url",
+        "selector": "div.col-md-8 div.row div.col-md-11.col-sm-11.col-xs-11 a",
+        "type": "attribute",
+        "attribute": "href",
+        "multiple": True
+      }
+    ]
+  }
+}
+
+    ,
+   {
+  "url": "https://www.iittp.ac.in/",
+  "schema": {
+    "name": "IIT trirupati Information",
+    "baseSelector": "div.marquee-container, div.scrollbar2, div.scrollbar3, section.event.pt-80", 
+    "fields": [
+      {
+        "name": "admission",
+        "selector": "div.marquee div.initial-child-container div.child a",
+        "type": "text"
+      },
+      {
+        "name": "admission_url",
+        "selector": "div.marquee div.initial-child-container div.child a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+
+      {
+        "name": "news",
+        "selector": "div.scrollbar2 div.event-item.mb-10.hover-zoomin div.text h6 a",
+        "type": "text"
+      },
+      {
+        "name": "news_url",
+        "selector": "div.scrollbar2 div.event-item.mb-10.hover-zoomin div.text h6 a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+
+      {
+        "name": "upcoming_Event_title",
+        "selector": "section.event.pt-80 div.event-item h3 a",
+        "type": "text"
+      },
+      {
+        "name": "upcoming_Event_date",
+        "selector": "section.event.pt-80 div.event-item div.date strong",
+        "type": "text"
+      },
+      {
+        "name": "upcoming_Event_url",
+        "selector": "section.event.pt-80 div.event-item h3 a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+
+      {
+        "name": "recruitment_title",
+        "selector": "div.scrollbar3 div.event-item.mb-10.hover-zoomin h6 a",
+        "type": "text"
+      },
+      {
+        "name": "recruitment_url",
+        "selector": "div.scrollbar3 div.event-item.mb-10.hover-zoomin h6 a",
+        "type": "attribute",
+        "attribute": "href"
+      }
+    ]
+  }
+}
+,
+    
   {
   "url": "https://www.iitbbs.ac.in/",
   "schema": {
