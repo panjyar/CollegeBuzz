@@ -1,0 +1,28 @@
+name: Run Daily Crawler
+
+on:
+  schedule:
+
+    - cron: "30 18 * * *" # runs at 12:00 AM IST (6:30 PM UTC) 
+  workflow_dispatch:
+
+jobs:
+  run-crawler:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'  
+
+      - name: Install backend dependencies
+        run: |
+          pip install -r backend/requirements.txt
+
+      - name: Run Crawler
+        run: |
+          python backend/aictcscraper.py
