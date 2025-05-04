@@ -27,8 +27,8 @@ jobs:
 
       # Step 4: Install Playwright browsers
       - name: Install Playwright Browsers
-        run: |
-          npx playwright install
+        run: playwright install
+
 
       # Step 5: Run the Crawler
       - name: Run Crawler
