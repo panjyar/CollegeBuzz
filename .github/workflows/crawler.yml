@@ -34,4 +34,4 @@ jobs:
             cd /home/runner/work/CollegeBuzz/CollegeBuzz/backend  # Full path to backend directory
             echo "Current directory contents:"
             ls -l  # List files to verify the presence of aictescraper.py
-            python aictescraper.py
+            python aictcscraper.py
