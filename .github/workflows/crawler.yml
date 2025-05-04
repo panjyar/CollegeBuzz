@@ -2,27 +2,33 @@ name: Run Daily Crawler
 
 on:
   schedule:
-
-    - cron: "30 18 * * *" # runs at 12:00 AM IST (6:30 PM UTC) 
-  workflow_dispatch:
+    - cron: "30 18 * * *" # runs at 12:00 AM IST (6:30 PM UTC)
+  workflow_dispatch:  # Manually trigger the workflow
 
 jobs:
   run-crawler:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the code from GitHub repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Step 2: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  
+          python-version: '3.11'  # Set the correct version of Python you need
 
+      # Step 3: Install backend dependencies
       - name: Install backend dependencies
         run: |
           pip install -r backend/requirements.txt
 
+      # Step 4: Run the Crawler
       - name: Run Crawler
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}  # Mongo URI from GitHub Secrets
         run: |
-          python backend/aictcscraper.py
+          echo "Starting the crawler job..."
+          python backend/aictescraper.py
