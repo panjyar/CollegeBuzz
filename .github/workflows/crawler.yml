@@ -31,7 +31,7 @@ jobs:
           MONGO_URI: ${{ secrets.MONGO_URI }}  # Mongo URI from GitHub Secrets
         run: |
             echo "Starting the crawler job..."
-            cd backend  # Change directory to backend
+            cd /home/runner/work/CollegeBuzz/CollegeBuzz/backend  # Full path to backend directory
             echo "Current directory contents:"
-            ls -l  # List files in the backend directory to verify
+            ls -l  # List files to verify the presence of aictescraper.py
             python aictescraper.py
