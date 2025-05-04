@@ -2,7 +2,7 @@ name: Run Daily Crawler
 
 on:
   schedule:
-    - cron: "30 18 * * *" # runs at 12:00 AM IST (6:30 PM UTC)
+    - cron: "30 18 * * *"  # runs at 12:00 AM IST (6:30 PM UTC)
   workflow_dispatch:  # Manually trigger the workflow
 
 jobs:
@@ -25,7 +25,12 @@ jobs:
         run: |
           pip install -r backend/requirements.txt
 
-      # Step 4: Run the Crawler
+      # Step 4: Install Playwright browsers
+      - name: Install Playwright Browsers
+        run: |
+          npx playwright install
+
+      # Step 5: Run the Crawler
       - name: Run Crawler
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}  # Mongo URI from GitHub Secrets
@@ -33,5 +38,5 @@ jobs:
             echo "Starting the crawler job..."
             cd /home/runner/work/CollegeBuzz/CollegeBuzz/backend  # Full path to backend directory
             echo "Current directory contents:"
-            ls -l  # List files to verify the presence of aictescraper.py
-            python aictcscraper.py
+            ls -l  # List files to verify the presence of aictcscraper.py
+            python aictcscraper.py  # Make sure the file name is correct
