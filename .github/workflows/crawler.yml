@@ -31,4 +31,4 @@ jobs:
           MONGO_URI: ${{ secrets.MONGO_URI }}  # Mongo URI from GitHub Secrets
         run: |
           echo "Starting the crawler job..."
-          python backend/aictcscraper.py
+          python aictcscraper.py
