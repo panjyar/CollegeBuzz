@@ -30,6 +30,8 @@ jobs:
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}  # Mongo URI from GitHub Secrets
         run: |
-          echo "Starting the crawler job..."
-          cd backend
-          python aictcscraper.py
+            echo "Starting the crawler job..."
+            cd backend  # Change directory to backend
+            echo "Current directory contents:"
+            ls -l  # List files in the backend directory to verify
+            python aictescraper.py
