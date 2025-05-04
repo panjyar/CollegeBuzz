@@ -1,5 +1,5 @@
 # crawler_config.py
-# IIT Kanpur , IIT BHU , IIT Hyderabad , IIT Mandi , IIT Patna , IIT Gandhinagar , IIT Jodhpur , IIT Indore , IIT Ropar , IIT Bhubnaneswar , IIT Tirupati , IIT Bhilai , IIT Dharwad , IIT Goa , IIT Jammu , IIT Palakakd , IIT 
+# IIT Kanpur , IIT BHU , IIT Hyderabad , IIT Mandi , IIT Patna , IIT Gandhinagar , IIT Jodhpur , IIT Indore , IIT Ropar , IIT Bhubnaneswar , IIT Tirupati , IIT Bhilai , IIT Dharwad , IIT Goa , IIT Jammu , IIT Palakakd 
 urls = [
     
 
