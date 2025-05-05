@@ -2,6 +2,38 @@
 # IIT Kanpur , IIT BHU , IIT Hyderabad , IIT Mandi , IIT Patna , IIT Gandhinagar , IIT Jodhpur , IIT Indore , IIT Ropar , IIT Bhubnaneswar , IIT Tirupati , IIT Bhilai , IIT Dharwad , IIT Goa , IIT Jammu , IIT Palakakd 
 urls = [
     
+    {
+  "url": "https://www.iitjammu.ac.in/",
+  "schema": {
+    "name": "IIT Jammu Information",
+    "baseSelector": "div.row ng-star-inserted div.col-md-3 , div.container div.row  ul", 
+    "fields": [
+      {
+        "name": "news",
+        "selector": "div.ng-star-inserted a h3",
+        "type": "text"
+      },
+      {
+        "name": "news_url",
+        "selector": "div.ng-star-inserted a",
+        "type": "attribute",
+        "attribute": "href"
+      },
+      {
+        "name": "news",
+        "selector": "ul div.ng-star-inserted a ",
+        "type": "text"
+      },
+      {
+        "name": "news_url",
+        "selector": "ul div.ng-star-inserted a ",
+        "type": "attribute",
+        "attribute": "href"
+      }
+    ]
+  }
+},
+    
 
      {
   "url": "https://www.iitgoa.ac.in/",
