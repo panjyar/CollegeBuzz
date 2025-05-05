@@ -33,7 +33,10 @@ jobs:
       # Step 5: Run the Crawler
       - name: Run Crawler
         env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}  # Mongo URI from GitHub Secrets
+            MONGO_URI: ${{ secrets.MONGO_URI }}
+            SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+            SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+            RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
         run: |
             echo "Starting the crawler job..."
             cd /home/runner/work/CollegeBuzz/CollegeBuzz/backend  # Full path to backend directory
