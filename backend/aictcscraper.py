@@ -10,29 +10,64 @@ from crawler_config import urls
 from dotenv import load_dotenv
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 load_dotenv()
 
 # ----------------------
 # Email Sending Function
 # ----------------------
-def send_email(subject, body):
+def send_email(subject, html_content):
     sender_email = os.environ.get("SENDER_EMAIL")
     sender_password = os.environ.get("SENDER_PASSWORD")  # App password
     receiver_email = os.environ.get("RECEIVER_EMAIL")
 
-    message = MIMEText(body)
-    message["Subject"] = subject
-    message["From"] = sender_email
-    message["To"] = receiver_email
+    msg = MIMEMultipart()
+    msg["Subject"] = subject
+    msg["From"] = sender_email
+    msg["To"] = receiver_email
+    msg.attach(MIMEText(html_content, "html"))
 
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
-            server.sendmail(sender_email, receiver_email, message.as_string())
+            server.sendmail(sender_email, receiver_email, msg.as_string())
         print("Email sent successfully!")
     except Exception as e:
         print(f"Error sending email: {e}")
+
+def get_success_template():
+    return """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head><meta charset="UTF-8"><title>Crawler Success</title></head>
+    <body style="font-family: Arial, sans-serif; background: #e0ffe0; padding: 20px;">
+      <div style="background: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #28a745;">✅ Crawler Completed Successfully!</h2>
+        <p>All tasks were executed without any issues.</p>
+        <p><strong>Keep up the great work! 🚀</strong></p>
+      </div>
+    </body>
+    </html>
+    """
+
+def get_failure_template(error_message):
+    return f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head><meta charset="UTF-8"><title>Crawler Failure Alert</title></head>
+    <body style="font-family: Arial, sans-serif; background: #ffe0e0; padding: 20px;">
+      <div style="background: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #dc3545;">❌ Crawler Failure Alert</h2>
+        <p><strong>Oops! Something went wrong during the crawl:</strong></p>
+        <div style="background: #f8d7da; padding: 15px; margin-top: 10px; border: 1px solid #f5c6cb; border-radius: 5px;">
+          <pre style="white-space: pre-wrap; font-size: 14px;">{error_message}</pre>
+        </div>
+        <p>Please check and resolve the issue. 🚑</p>
+      </div>
+    </body>
+    </html>
+    """
 
 # ----------------------
 # Crawler Logic
@@ -99,20 +134,22 @@ async def extract_notices_and_events():
                     if records:
                         mongo_handler.insert_data(collection_name, records)
 
-        # ✅ If everything runs fine, send success email
+        # ✅ If everything runs fine, send beautiful success email
+        success_html = get_success_template()
         send_email(
-            subject="Crawler Run Completed ✅",
-            body="Your AICTE college news/event crawler finished successfully!"
+            subject="✅ CollegeBuzz Crawler Success",
+            html_content=success_html
         )
 
     except Exception as e:
         error_message = f"Error during crawling: {str(e)}"
         print(error_message)
 
-        # ❌ Send failure email if error occurs
+        # ❌ Send beautiful failure email
+        failure_html = get_failure_template(error_message)
         send_email(
-            subject="Crawler Run Failed ❌",
-            body=error_message
+            subject="❌ CollegeBuzz Crawler Failure",
+            html_content=failure_html
         )
         raise
 
