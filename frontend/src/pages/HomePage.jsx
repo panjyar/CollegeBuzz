@@ -312,10 +312,16 @@ const HomePage = () => {
           )}
           
           {/* 🔹 Featured Sections */}
-          <div className="featured-sections" style={{ display: "flex", flexDirection: "row", gap: "2rem", marginBottom: "2rem" }}>
-            <UpcomingEvents events={filteredEvents} handleTabChange={setActiveTab} showFeatured={true} />
-            <ResearchPapers papers={filteredResearch} handleTabChange={setActiveTab} />
-          </div>
+           {!isSearchActive && ( // Show featured only if no search is active, or adjust logic
+            <div className="featured-sections" style={{ display: "flex", flexDirection: "row", gap: "2rem", marginBottom: "2rem" }}>
+              <div style={{ flex: "1 1 50%" }}>
+                <UpcomingEvents events={featuredEvents} handleTabChange={setActiveTab} showFeatured={true} />
+              </div>
+              <div style={{ flex: "1 1 50%" }}>
+                <ResearchPapers papers={featuredResearch} handleTabChange={setActiveTab} />
+              </div>
+            </div>
+          )}
 
           {/* 🔹 Tabs and Content */}
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
