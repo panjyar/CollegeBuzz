@@ -1,0 +1,57 @@
+.logo-carousel-container {
+  overflow: hidden;
+  width: 100%;
+  background-color: #f8fafc;
+  padding: 2rem 0;
+  border-radius: 8px;
+}
+
+.logo-carousel {
+  display: flex;
+  animation: scroll 30s linear infinite;
+  width: calc(180px * 20); /* Width of each logo (180px) * number of logos (10 original + 10 duplicate) */
+}
+
+.logo-item {
+  width: 180px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1rem;
+  flex-shrink: 0;
+}
+
+.logo-item img {
+  max-width: 100%;
+  max-height: 100%;
+  filter: grayscale(100%);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.logo-item img:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-180px * 10)); /* Width of each logo * number of original logos */
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .logo-carousel {
+    animation: scroll 20s linear infinite; /* Slightly faster on mobile */
+  }
+}
+
+/* Pause animation on hover */
+.logo-carousel-container:hover .logo-carousel {
+  animation-play-state: paused;
+}

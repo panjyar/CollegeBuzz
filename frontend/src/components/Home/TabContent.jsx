@@ -9,21 +9,16 @@ const TabContent = ({ activeTab }) => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('newest'); // Default sort option
+  const [visibleCount, setVisibleCount] = useState(10); // NEW: how many items to show initially
   
   useEffect(() => {
     const loadContent = async () => {
       setLoading(true);
       try {
-        // Fetch data from API
         const data = await fetchActiveRecords(activeTab);
-        
-        // Remove duplicates based on title field
         const titleField = getTitleField(activeTab);
         const uniqueData = removeDuplicates(data, titleField);
-        
-        // Sort content based on activeTab type
         const sortedData = sortContentByType(uniqueData, activeTab);
-        
         setContent(sortedData);
       } catch (error) {
         console.error(`Error loading ${activeTab}:`, error);
@@ -33,20 +28,14 @@ const TabContent = ({ activeTab }) => {
     };
     
     loadContent();
+    setVisibleCount(10); // Reset visible count when tab changes
   }, [activeTab]);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
+    setVisibleCount(10); // Reset visible count when search term changes
   };
 
-  // Filter content based on search term
-  const filteredContent = content.filter(item => {
-    const titleField = getTitleField(activeTab);
-    const title = item?.[titleField] || '';
-    return title.toLowerCase().includes(searchTerm.toLowerCase());
-  });
-  
-  // Handle sorting change
   const handleSortChange = (e) => {
     setSortOption(e.target.value);
     
@@ -54,7 +43,6 @@ const TabContent = ({ activeTab }) => {
     if (e.target.value === 'newest') {
       sortedContent = sortContentByType(content, activeTab);
     } else if (e.target.value === 'oldest') {
-      // For oldest, we reverse the default sorting
       sortedContent = [...sortContentByType(content, activeTab)].reverse();
     } else if (e.target.value === 'alphabetical') {
       const titleField = getTitleField(activeTab);
@@ -64,10 +52,20 @@ const TabContent = ({ activeTab }) => {
         return titleA.localeCompare(titleB);
       });
     }
-    
     setContent(sortedContent);
+    setVisibleCount(10); // Reset visible count when sorting changes
   };
-  
+
+  const handleSeeMore = () => {
+    setVisibleCount(prevCount => prevCount + 10);
+  };
+
+  const titleField = getTitleField(activeTab);
+  const filteredContent = content.filter(item => {
+    const title = item?.[titleField] || '';
+    return title.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   return (
     <div id="tab-content-section" className="tab-content">
       {loading ? (
@@ -98,18 +96,39 @@ const TabContent = ({ activeTab }) => {
           </div>
           
           {filteredContent.length > 0 ? (
-            <ul className="content-list" style={{ listStyleType: 'none', padding: 0 }}>
-              {filteredContent.map((item, index) => (
-                <ContentItem 
-                  key={index}
-                  item={item}
-                  activeTab={activeTab}
-                  index={index}
-                  totalItems={filteredContent.length}
-                  searchTerm={searchTerm}
-                />
-              ))}
-            </ul>
+            <>
+              <ul className="content-list" style={{ listStyleType: 'none', padding: 0 }}>
+                {filteredContent.slice(0, visibleCount).map((item, index) => (
+                  <ContentItem 
+                    key={index}
+                    item={item}
+                    activeTab={activeTab}
+                    index={index}
+                    totalItems={filteredContent.length}
+                    searchTerm={searchTerm}
+                  />
+                ))}
+              </ul>
+
+              {visibleCount < filteredContent.length && (
+                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                  <button
+                    onClick={handleSeeMore}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      fontSize: '1rem',
+                      borderRadius: '0.5rem',
+                      backgroundColor: '#3b82f6',
+                      color: 'white',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    See More
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="no-content" style={{ textAlign: 'center', padding: '2rem 0' }}>
               <p>No {activeTab.replace('_', ' ')} found</p>

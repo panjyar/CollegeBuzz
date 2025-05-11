@@ -1,6 +1,7 @@
 import React from "react";
 import { MapPin, Phone, Mail, Globe, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import { categories } from "../../utils/fieldMappings.js";
+import { Link } from "react-router-dom";
 import NewsletterSubscribe from "../common/NewsletterSubscribe.jsx";
 
 const Footer = ({ handleTabChange }) => {
@@ -24,6 +25,18 @@ const Footer = ({ handleTabChange }) => {
           <p style={{ lineHeight: "1.6", fontSize: "0.95rem", color: "#e2e8f0" }}>
             AICTE Central Hub is a comprehensive platform that aggregates information from AICTE-approved institutions across India, providing a single point of access for students, educators, and stakeholders.
           </p>
+          <Link 
+            to="/about" 
+            style={{ 
+              display: "inline-block", 
+              marginTop: "0.75rem", 
+              color: "#e2e8f0", 
+              textDecoration: "underline", 
+              fontSize: "0.95rem" 
+            }}
+          >
+            Learn more about us
+          </Link>
         </div>
 
         {/* Quick Links */}
@@ -32,12 +45,8 @@ const Footer = ({ handleTabChange }) => {
           <ul style={{ listStyleType: "none", padding: 0 }}>
             {categories.map((category) => (
               <li key={category} style={{ marginBottom: "0.75rem" }}>
-                <a 
-                  href="#" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTabChange(category);
-                  }}
+                <Link
+                  to={`/home/${category}`}
                   style={{ 
                     color: "#e2e8f0", 
                     textDecoration: "none",
@@ -45,7 +54,7 @@ const Footer = ({ handleTabChange }) => {
                   }}
                 >
                   {category.replace("_", " ").charAt(0).toUpperCase() + category.replace("_", " ").slice(1)}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -112,9 +121,9 @@ const Footer = ({ handleTabChange }) => {
       }}>
         <p>&copy; {new Date().getFullYear()} AICTE Central Hub. All rights reserved.</p>
         <div style={{ marginTop: "0.5rem" }}>
-          <a href="#" style={{ color: "#e2e8f0", marginRight: "1.5rem", textDecoration: "none" }}>Privacy Policy</a>
-          <a href="#" style={{ color: "#e2e8f0", marginRight: "1.5rem", textDecoration: "none" }}>Terms of Service</a>
-          <a href="#" style={{ color: "#e2e8f0", textDecoration: "none" }}>Sitemap</a>
+          <Link to="/privacy-policy" style={{ color: "#e2e8f0", marginRight: "1.5rem", textDecoration: "none" }}>Privacy Policy</Link>
+          <Link to="/terms" style={{ color: "#e2e8f0", marginRight: "1.5rem", textDecoration: "none" }}>Terms of Service</Link>
+          <Link to="/sitemap" style={{ color: "#e2e8f0", textDecoration: "none" }}>Sitemap</Link>
         </div>
       </div>
     </footer>
