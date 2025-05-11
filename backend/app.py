@@ -49,7 +49,7 @@ def get_active_records(collection_name):
             "available_collections": valid_collections
         }), 400
 
-    limit = int(request.args.get('limit', 50))
+    limit = int(request.args.get('limit', 500))
     records = db_handler.get_active_records(collection_name, limit)
     return jsonify(convert_mongo_to_json(records))
 
@@ -62,7 +62,7 @@ def get_archived_records(collection_name):
             "available_collections": valid_collections
         }), 400
 
-    limit = int(request.args.get('limit', 50))
+    limit = int(request.args.get('limit', 500))
     records = db_handler.get_archived_records(collection_name, limit)
     return jsonify(convert_mongo_to_json(records))
 
