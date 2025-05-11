@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// src/pages/HomePage.jsx
+import React, { useEffect, useState, useCallback } from "react";
 import { fetchActiveRecords } from "../services/apiServices.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import Layout from "../components/Layout/Layout.jsx";
@@ -9,364 +10,265 @@ import Tabs from "../components/UI/Tabs.jsx";
 import TabContent from "../components/Home/TabContent.jsx";
 import LoginRequired from "../components/Home/LoginRequired.jsx";
 import SearchBar from "../components/common/SearchBar.jsx";
-import { getCollegeName } from "../utils/collegeMapper.js";
-import { fieldMappings } from "../utils/fieldMappings.js";
-import { isDateInRange } from "../utils/dateUtils.js";
+import { useParams, useNavigate } from "react-router-dom";
 
 const HomePage = () => {
-  const [data, setData] = useState({});
-  const [activeTab, setActiveTab] = useState("news");
-  const [featuredEvents, setFeaturedEvents] = useState([]);
-  const [featuredResearch, setFeaturedResearch] = useState([]);
-  const [searchFilters, setSearchFilters] = useState({
-    query: "",
-    keyword: "",
-    college: "",
-    category: "",
-    dateFrom: "",
-    dateTo: ""
-  });
-  const [isAdvancedSearch, setIsAdvancedSearch] = useState(false);
-  const { isAuthenticated } = useAuth();
-
-  // Collections to fetch
+  // State for all data, keyed by collection name (e.g., news, tenders)
+  const [allData, setAllData] = useState({});
+  const { tabName } = useParams(); // Get tab from URL
+  const navigate = useNavigate(); // To programmatically navigate
+  
+  // Collections to manage
   const collections = [
     "news", "notices", "tenders", 
     "upcoming_events", "recruitments", 
     "admissions", "research"
   ];
+  
+  // Default to "news" if tabName is invalid or not provided
+  const validTabName = collections.includes(tabName) ? tabName : "news";
+  
+  // Set active tab based on URL param, with validation
+  const [activeTab, setActiveTab] = useState(validTabName);
 
+  // States for featured sections (still useful for initial display)
+  const [featuredEvents, setFeaturedEvents] = useState([]);
+  const [featuredResearch, setFeaturedResearch] = useState([]);
+  
+  // State for search parameters
+  const [searchParams, setSearchParams] = useState({}); // Store keyword or advanced filters object
+  
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { isAuthenticated } = useAuth();
 
+  // Handle tab change - update state and URL
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    navigate(`/home/${newTab}`); // update URL
+  };
+
+  // Sync active tab with URL parameter when it changes
   useEffect(() => {
-    const fetchData = async () => {
-      if (isAuthenticated) {
-        try {
-          const fetchedData = {};
-          for (const collection of collections) {
-            const records = await fetchActiveRecords(collection);
-            fetchedData[collection] = records;
-          }
+    if (tabName && collections.includes(tabName)) {
+      setActiveTab(tabName);
+    } else if (tabName && !collections.includes(tabName)) {
+      // Redirect to a valid tab if an invalid one is provided
+      navigate('/home/news', { replace: true });
+    }
+  }, [tabName, navigate, collections]);
 
-          // Sort upcoming events by crawled_at date
-          const sortedEvents = fetchedData.upcoming_events || [];
-          sortedEvents.sort((a, b) => {
-            const dateA = a.crawled_at?.$date ? new Date(a.crawled_at.$date) : new Date(0);
-            const dateB = b.crawled_at?.$date ? new Date(b.crawled_at.$date) : new Date(0);
-            return dateB - dateA; // Sort in descending order (newest first)
-          });
-          
-          // Limit to 5 most recent events for the featured section
+  // Debounce search function to avoid excessive API calls
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  };
+
+  // Function to fetch data for a specific collection
+  // useCallback to memoize the function
+  const fetchDataForCollection = useCallback(async (collectionName, currentSearchParams) => {
+    if (!isAuthenticated) return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      const options = { 
+        limit: 50, // Default limit, can be adjusted
+        // Pass search parameters to the API
+        ...(currentSearchParams?.keyword && { keyword: currentSearchParams.keyword }),
+        ...(currentSearchParams?.filters && { filters: currentSearchParams.filters })
+      };
+      
+      console.log(`Fetching ${collectionName} with options:`, options);
+      const records = await fetchActiveRecords(collectionName, options);
+      
+      setAllData(prevData => ({
+        ...prevData,
+        [collectionName]: records || [] // Ensure it's an array
+      }));
+
+      // Update featured sections if fetching initial data (no search params)
+      // Or if the search should also filter featured items (more complex)
+      if (!currentSearchParams || Object.keys(currentSearchParams).length === 0) {
+        if (collectionName === "upcoming_events") {
+          // Sort by a date field, e.g., 'crawled_at' or 'event_date' if available
+          // Assuming records have a $date field for crawled_at from backend
+          const sortedEvents = [...(records || [])].sort((a, b) => 
+            new Date(b.crawled_at?.$date || b.last_updated_at?.$date || 0) - 
+            new Date(a.crawled_at?.$date || a.last_updated_at?.$date || 0)
+          );
           setFeaturedEvents(sortedEvents.slice(0, 5));
-
-          // Sort research papers by crawled_at date
-          const sortedResearch = fetchedData.research || [];
-          sortedResearch.sort((a, b) => {
-            const dateA = a.crawled_at?.$date ? new Date(a.crawled_at.$date) : new Date(0);
-            const dateB = b.crawled_at?.$date ? new Date(b.crawled_at.$date) : new Date(0);
-            return dateB - dateA;
-          });
-          
-          // Limit to 4 most recent research papers
+        }
+        if (collectionName === "research") {
+          const sortedResearch = [...(records || [])].sort((a, b) => 
+            new Date(b.crawled_at?.$date || b.last_updated_at?.$date || 0) - 
+            new Date(a.crawled_at?.$date || a.last_updated_at?.$date || 0)
+          );
           setFeaturedResearch(sortedResearch.slice(0, 4));
-
-          setData(fetchedData);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          setError(error);
         }
       }
-    };
 
-    fetchData();
-  }, [isAuthenticated]);
+    } catch (err) {
+      console.error(`Error fetching ${collectionName}:`, err);
+      setError(`Failed to load ${collectionName}.`);
+      setAllData(prevData => ({
+        ...prevData,
+        [collectionName]: [] // Set to empty array on error for this collection
+      }));
+    } finally {
+      setIsLoading(false); // Ideally, manage loading state per collection or globally
+    }
+  }, [isAuthenticated]); // Dependency: isAuthenticated
 
-  // Handle search
-  const handleSearch = (searchInput) => {
-    if (typeof searchInput === 'string') {
-      // Basic search
-      setSearchFilters({
-        query: searchInput,
-        keyword: "",
-        college: "",
-        category: "",
-        dateFrom: "",
-        dateTo: ""
-      });
-      setIsAdvancedSearch(false);
+  // Initial data load for all collections
+  useEffect(() => {
+    if (isAuthenticated) {
+      collections.forEach(collection => fetchDataForCollection(collection, {})); // Fetch with empty params initially
     } else {
-      // Advanced search with filters
-      setSearchFilters({
-        query: "",
-        ...searchInput
-      });
-      setIsAdvancedSearch(true);
+      // Clear data if not authenticated
+      setAllData({});
+      setFeaturedEvents([]);
+      setFeaturedResearch([]);
+    }
+  }, [isAuthenticated, fetchDataForCollection]); // Add collections to deps if it can change, though it's constant here
+
+  // Effect to re-fetch data when searchParams or activeTab changes
+  useEffect(() => {
+    if (isAuthenticated && (searchParams.keyword || searchParams.filters)) {
+        // If search is active, fetch for the current tab with search params
+        fetchDataForCollection(activeTab, searchParams);
+    } else if (isAuthenticated && Object.keys(searchParams).length === 0) {
+        // If search was cleared, fetch initial data for the current tab
+        fetchDataForCollection(activeTab, {});
+    }
+    // If you want all tabs to update on search, iterate collections:
+    // collections.forEach(col => fetchDataForCollection(col, searchParams));
+  }, [searchParams, activeTab, isAuthenticated, fetchDataForCollection]);
+
+  // Debounced search handler
+  const debouncedFetch = useCallback(debounce((params) => {
+    setSearchParams(params); // This will trigger the useEffect above
+  }, 500), []);
+
+  const handleSearch = (searchInput) => {
+    // searchInput will be an object from SearchBar.jsx:
+    // e.g., { keyword: "some text" } OR { title: "...", college: "...", ... }
+    // The SearchBar's parseBasicSearchQuery converts "prefix:value" to an object.
+    // A plain string from basic search (no prefix) becomes { keyword: "plain string" }
+    
+    if (typeof searchInput === 'string' && searchInput.trim() === "") { // Basic search cleared
+        debouncedFetch({}); // Empty object to signify clear search
+    } else if (typeof searchInput === 'string') { // Basic search with a term (should be obj from SearchBar now)
+        debouncedFetch({ keyword: searchInput });
+    } else if (typeof searchInput === 'object') { // Advanced search or parsed basic search
+        // The 'filters' key is what apiServices expects for advanced criteria
+        // 'keyword' is a top-level param for apiServices for general keyword search
+        const newSearchParams = {};
+        if (searchInput.keyword) { // General keyword from basic or advanced
+            newSearchParams.keyword = searchInput.keyword;
+        }
+        // Collect other fields as 'filters'
+        const advancedFilterFields = {};
+        for (const key in searchInput) {
+            if (key !== 'keyword' && searchInput[key]) {
+                 advancedFilterFields[key] = searchInput[key];
+            }
+        }
+        if (Object.keys(advancedFilterFields).length > 0) {
+            newSearchParams.filters = advancedFilterFields;
+        }
+        debouncedFetch(newSearchParams);
+    } else {
+        debouncedFetch({}); // Clear search if input is unexpected
     }
   };
-
-  // Advanced filter function
-  const filterData = (items, tabKey) => {
-    if (!items) return [];
-    
-    // If no search is active, return all items
-    if (!isAdvancedSearch && !searchFilters.query) return items;
-    
-    return items.filter((item) => {
-      // Get mappings for this tab
-      const mapping = fieldMappings[tabKey];
-      if (!mapping) return false;
-      
-      // For basic search, use the query across all fields
-      if (!isAdvancedSearch) {
-        const query = searchFilters.query.toLowerCase();
-        if (!query) return true;
-        
-        // Check title match
-        const title = item.title?.toLowerCase() || "";
-        const titleMatch = title.includes(query);
-        
-        // Check date match (if it looks like a date)
-        const dateStr = item.published_at;
-        const dateMatch = dateStr?.toLowerCase().includes(query);
-        
-        // Check college name match
-        const collegeLink = item.link;
-        const collegeName = getCollegeName(collegeLink)?.toLowerCase() || "";
-        const collegeMatch = collegeName.includes(query);
-        
-        // Check content match if available
-        const content = item.description?.toLowerCase() || "";
-        const contentMatch = content.includes(query);
-        
-        // Check for category-specific keywords
-        const isTenderSearch = query.includes("tender");
-        const isAdmissionSearch = query.includes("admission");
-        const isNoticeSearch = query.includes("notice");
-        const isRecruitmentSearch = query.includes("recruitment");
-        const isEventSearch = query.includes("event");
-        
-        // Check if title contains any of these categories
-        const categoryMatch = 
-          (isTenderSearch && (title.includes("tender") || tabKey === "tenders")) ||
-          (isAdmissionSearch && (title.includes("admission") || tabKey === "admissions")) ||
-          (isNoticeSearch && (title.includes("notice") || tabKey === "notices")) ||
-          (isRecruitmentSearch && (title.includes("recruitment") || tabKey === "recruitments")) ||
-          (isEventSearch && (title.includes("event") || tabKey === "upcoming_events"));
-        
-        // Return true if any of the conditions match
-        return titleMatch || dateMatch || collegeMatch || contentMatch || categoryMatch;
-      } 
-      
-      // For advanced search, check against all the specific filters
-      else {
-        // Track if all active filters match
-        let matches = true;
-        
-        // Check keyword in title and content
-        if (searchFilters.keyword) {
-          const keyword = searchFilters.keyword.toLowerCase();
-          const title = item.title?.toLowerCase() || "";
-          const content = item.description?.toLowerCase() || "";
-          
-          if (!title.includes(keyword) && !content.includes(keyword)) {
-            matches = false;
-          }
-        }
-        
-        // Check college name
-        if (searchFilters.college && matches) {
-          const collegeFilter = searchFilters.college.toLowerCase();
-          const collegeLink = item.link;
-          const collegeName = getCollegeName(collegeLink)?.toLowerCase() || "";
-          
-          if (!collegeName.includes(collegeFilter)) {
-            matches = false;
-          }
-        }
-        
-        // Check category
-        if (searchFilters.category && matches) {
-          // For category, check if the current tab matches or if the title contains the category
-          const categoryFilter = searchFilters.category.toLowerCase();
-          const title = item.title?.toLowerCase() || "";
-          const isTabMatch = (
-            (categoryFilter === "tender" && tabKey === "tenders") ||
-            (categoryFilter === "admission" && tabKey === "admissions") ||
-            (categoryFilter === "notice" && tabKey === "notices") ||
-            (categoryFilter === "recruitment" && tabKey === "recruitments") ||
-            (categoryFilter === "research" && tabKey === "research") ||
-            (categoryFilter === "events" && tabKey === "upcoming_events")
-          );
-          
-          const isTitleMatch = title.includes(categoryFilter);
-          
-          if (!isTabMatch && !isTitleMatch) {
-            matches = false;
-          }
-        }
-        
-        // Check date range
-        if ((searchFilters.dateFrom || searchFilters.dateTo) && matches) {
-          const dateStr = item.published_at;
-          if (!isDateInRange(dateStr, searchFilters.dateFrom, searchFilters.dateTo)) {
-            matches = false;
-          }
-        }
-        
-        return matches;
-      }
-    });
+  
+  const clearSearch = () => {
+    setSearchParams({}); // This will trigger re-fetch of initial data for the current tab
+    // Optionally, tell SearchBar to reset its internal state too (if SearchBar needs it)
   };
 
-  // Create filtered data object for all tabs
-  const filteredData = Object.keys(data)
-    .reduce((acc, tabKey) => {
-      acc[tabKey] = filterData(data[tabKey], tabKey);
-      return acc;
-    }, {});
-
-  // Filter featured sections
-  const filteredEvents = filterData(featuredEvents, "upcoming_events");
-  const filteredResearch = filterData(featuredResearch, "research");
-
-  // Check if search is active
-  const isSearchActive = isAdvancedSearch || !!searchFilters.query;
-
-  // Count total results across all tabs
-  const totalResults = Object.keys(filteredData).reduce(
-    (total, key) => total + (filteredData[key]?.length || 0), 
-    0
-  );
+  const currentTabData = allData[activeTab] || [];
+  const totalResults = currentTabData.length; // Total results for the current tab based on API response
+  const isSearchActive = !!searchParams.keyword || !!searchParams.filters;
 
   return (
-    <Layout handleTabChange={setActiveTab}>
+    <Layout handleTabChange={handleTabChange} activeTab={activeTab}>
       <HeroSection isAuthenticated={isAuthenticated} />
 
       {isAuthenticated ? (
-        <div className="main-content" style={{ padding: "0 2rem" }}>
-          {/* Search Bar */}
+        <div className="main-content" style={{ padding: "0 1rem", maxWidth: "1200px", margin: "0 auto" }}>
           <SearchBar onSearch={handleSearch} />
           
-          {/* Search Results Summary */}
           {isSearchActive && (
             <div style={{ 
-              margin: "0.5rem 0 1.5rem", 
-              padding: "0.75rem 1rem", 
-              backgroundColor: "#f3f4f6", 
-              borderRadius: "0.375rem",
-              fontSize: "0.95rem",
-              color: "#4b5563",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center"
+              margin: "0.5rem 0 1.5rem", padding: "0.75rem 1rem", 
+              backgroundColor: "#f3f4f6", borderRadius: "0.375rem",
+              fontSize: "0.95rem", color: "#4b5563",
+              display: "flex", justifyContent: "space-between", alignItems: "center"
             }}>
               <div>
-                {totalResults > 0 ? (
-                  <span>Found <strong>{totalResults}</strong> results</span>
-                ) : (
-                  <span>No results found for your search</span>
-                )}
-                {isAdvancedSearch && (
-                  <div style={{ fontSize: "0.85rem", marginTop: "0.25rem" }}>
-                    {searchFilters.keyword && <span>Keyword: <strong>{searchFilters.keyword}</strong> </span>}
-                    {searchFilters.college && <span>College: <strong>{searchFilters.college}</strong> </span>}
-                    {searchFilters.category && <span>Category: <strong>{searchFilters.category}</strong> </span>}
-                    {(searchFilters.dateFrom || searchFilters.dateTo) && (
-                      <span>Date range: <strong>
-                        {searchFilters.dateFrom || 'Any'} to {searchFilters.dateTo || 'Any'}
-                      </strong></span>
-                    )}
-                  </div>
-                )}
-                {!isAdvancedSearch && searchFilters.query && (
-                  <span>Search term: <strong>"{searchFilters.query}"</strong></span>
+                <span>
+                  {isLoading ? "Searching..." : 
+                    (totalResults > 0 ? `Found ${totalResults} results for '${activeTab}'` : `No results found for '${activeTab}'`)
+                  }
+                </span>
+                {/* Display active search criteria - simplified */}
+                {(searchParams.keyword || searchParams.filters) && (
+                    <div style={{ fontSize: "0.85rem", marginTop: "0.25rem" }}>
+                        {searchParams.keyword && <span>Keyword: <strong>{searchParams.keyword}</strong> </span>}
+                        {searchParams.filters && Object.entries(searchParams.filters).map(([key, value]) => (
+                            value ? <span key={key} style={{ marginRight: '10px' }}>{key}: <strong>{String(value)}</strong></span> : null
+                        ))}
+                    </div>
                 )}
               </div>
-              
-              {isSearchActive && (
-                <button 
-                  onClick={() => {
-                    setSearchFilters({
-                      query: "",
-                      keyword: "",
-                      college: "",
-                      category: "",
-                      dateFrom: "",
-                      dateTo: ""
-                    });
-                    setIsAdvancedSearch(false);
-                  }}
-                  style={{
-                    background: "none",
-                    border: "1px solid #d1d5db",
-                    borderRadius: "0.25rem",
-                    padding: "0.3rem 0.6rem",
-                    fontSize: "0.8rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  Clear Search
-                </button>
-              )}
+              <button onClick={clearSearch} /* style your clear button */ >Clear Search</button>
             </div>
           )}
           
-          {/* 🔹 Featured Sections */}
-           {!isSearchActive && ( // Show featured only if no search is active, or adjust logic
+          {/* Featured Sections - these might still be from initial load or also filtered if logic is added */}
+          {!isSearchActive && ( // Show featured only if no search is active, or adjust logic
             <div className="featured-sections" style={{ display: "flex", flexDirection: "row", gap: "2rem", marginBottom: "2rem" }}>
               <div style={{ flex: "1 1 50%" }}>
-                <UpcomingEvents events={featuredEvents} handleTabChange={setActiveTab} showFeatured={true} />
+                <UpcomingEvents events={featuredEvents} handleTabChange={handleTabChange} showFeatured={true} />
               </div>
               <div style={{ flex: "1 1 50%" }}>
-                <ResearchPapers papers={featuredResearch} handleTabChange={setActiveTab} />
+                <ResearchPapers papers={featuredResearch} handleTabChange={handleTabChange} />
               </div>
             </div>
           )}
 
-          {/* 🔹 Tabs and Content */}
-          <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-          <TabContent 
-            data={filteredData}
-            activeTab={activeTab}
-            searchTerm={isAdvancedSearch ? searchFilters.keyword : searchFilters.query} 
+          <Tabs 
+            activeTab={activeTab} 
+            setActiveTab={handleTabChange} 
+            collections={collections} 
           />
           
-          {/* Show "No results" message if search is active but no results found */}
-          {isSearchActive && totalResults === 0 && (
-            <div style={{ 
-              textAlign: "center", 
-              padding: "2rem", 
-              backgroundColor: "#f9fafb", 
-              borderRadius: "0.5rem",
-              margin: "1rem 0" 
-            }}>
-              <p style={{ color: "#6b7280", fontSize: "1.1rem", marginBottom: "1rem" }}>
-                No results found for your search.
-              </p>
-              <div style={{ fontSize: "0.95rem", color: "#6b7280" }}>
-                <p>Try adjusting your search terms or filters:</p>
-                <ul style={{ textAlign: "left", maxWidth: "500px", margin: "1rem auto", lineHeight: "1.5" }}>
-                  <li>Check for typos or use more general keywords</li>
-                  <li>Try searching in different categories</li>
-                  <li>Broaden your date range if you've specified dates</li>
-                  <li>Use partial college names instead of full names</li>
-                </ul>
-              </div>
-            </div>
+          {isLoading && activeTab && <p>Loading {activeTab}...</p>}
+          {error && <div className="error-message" style={{ color: 'red', padding: '1rem' }}>{error}</div>}
+          
+          {!isLoading && !error && (
+            <TabContent 
+              data={{ [activeTab]: currentTabData }} // Pass only current tab's data
+              activeTab={activeTab}
+              // searchTerm is not directly needed by TabContent if data is already filtered
+            />
           )}
           
-          {error && (
-            <div className="error-message" style={{
-              padding: "1rem",
-              backgroundColor: "#fee2e2",
-              color: "#b91c1c",
-              borderRadius: "0.375rem",
-              margin: "1rem 0"
-            }}>
-              Failed to load data. Please try again later.
-              {error.message && <p>{error.message}</p>}
-            </div>
+          {isSearchActive && !isLoading && totalResults === 0 && (
+             <div style={{ textAlign: "center", padding: "2rem", backgroundColor: "#f9fafb", borderRadius: "0.5rem", margin: "1rem 0" }}>
+               <p style={{ color: "#6b7280", fontSize: "1.1rem", marginBottom: "1rem" }}>
+                 No results found for your search in '{activeTab}'.
+               </p>
+               {/* ... (suggestions for adjusting search) ... */}
+             </div>
           )}
+
         </div>
       ) : (
         <LoginRequired />
