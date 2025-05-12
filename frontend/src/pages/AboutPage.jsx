@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "../components/Layout/Layout.jsx";
 import { FaGraduationCap, FaUniversity, FaUsers, FaChartLine, FaLightbulb, FaHandshake } from "react-icons/fa";
 import ClientLogos from "../components/About/ClientLogos.jsx";
-
+import heroimg from "../assets/img1.jpg";
 const AboutPage = () => {
   return (
     <Layout>
@@ -12,7 +12,7 @@ const AboutPage = () => {
           style={{ 
             textAlign: "center", 
             marginBottom: "4rem",
-            background: "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/campus-background.jpg')",
+            background: `url(${heroimg})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             color: "white",

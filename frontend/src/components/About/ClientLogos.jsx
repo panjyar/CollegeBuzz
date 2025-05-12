@@ -1,6 +1,37 @@
 // src/components/About/ClientLogoSlider.jsx
 import React, { useEffect, useRef } from "react";
 
+// Import logos
+import citkLogo from "../../assets/citk.png";
+import iitBhilaiLogo from "../../assets/IITBhilai.png";
+import iitBombayLogo from "../../assets/File_Indian_Institute_of_Technology_Bombay_Logo.svg";
+import iitBhuLogo from "../../assets/iitbhu.png";
+import iitGuwahatiLogo from "../../assets/iitg.png";
+import iitJodhpurLogo from "../../assets/iitjodhpur.png";
+import iitKanpurLogo from "../../assets/iitkanpur.png";
+import iitMadrasLogo from "../../assets/iitm.png";
+import iitPatnaLogo from "../../assets/iitp.png";
+import nitTrichyLogo from "../../assets/nitw.png";
+import vitLogo from "../../assets/vit.png";
+import iitb from "../../assets/iitb.png";
+import iitm from "../../assets/IIT_Mandi.svg.png";
+import iitj from "../../assets/iitj.png";
+import iitkanpur from "../../assets/iitkanpur.png";
+
+import iitp from "../../assets/iitp.png";
+import iitropar from "../../assets/iitropar.png";
+import iitt from "../../assets/iitt.png";
+import iitmnit from "../../assets/mnit.png";
+import nitc from "../../assets/nitc.png";
+import nitdurga from "../../assets/nitdurga.png";
+import nitj from "../../assets/nitj.png";
+import nitk from "../../assets/nitkarnataka.png";
+import nitkk from "../../assets/nitkashmire.png";
+import nitp from "../../assets/nitp.png";
+import nitw from "../../assets/nitw.png";
+import nits from "../../assets/nits.png";
+import vit from "../../assets/vit.png";
+
 const ClientLogoSlider = () => {
   // Create references to the slider containers
   const sliderOneRef = useRef(null);
@@ -8,18 +39,40 @@ const ClientLogoSlider = () => {
 
   // Array of dummy college logos (placeholder images)
   // In a real implementation, replace these with actual college logos
-  const dummyLogos = [
-    { id: 1, name: "IIT Delhi", color: "#3B82F6" },
-    { id: 2, name: "IIT Bombay", color: "#10B981" },
-    { id: 3, name: "NIT Trichy", color: "#F59E0B" },
-    { id: 4, name: "IIIT Hyderabad", color: "#EF4444" },
-    { id: 5, name: "VIT Vellore", color: "#8B5CF6" },
-    { id: 6, name: "BITS Pilani", color: "#EC4899" },
-    { id: 7, name: "IIT Madras", color: "#6366F1" },
-    { id: 8, name: "Anna University", color: "#14B8A6" },
-    { id: 9, name: "Delhi University", color: "#F97316" },
-    { id: 10, name: "IIT Kharagpur", color: "#84CC16" }
-  ];
+ const dummyLogos = [
+  { id: 1, name: "CIT Kokrajhar", logo: citkLogo },
+  { id: 2, name: "IIT Bhilai", logo: iitBhilaiLogo },
+  { id: 3, name: "IIT Bombay", logo: iitb },
+  { id: 4, name: "IIT BHU", logo: iitBhuLogo },
+  { id: 5, name: "IIT Guwahati", logo: iitGuwahatiLogo },
+  { id: 6, name: "IIT Jodhpur", logo: iitJodhpurLogo },
+  { id: 7, name: "IIT Kanpur", logo: iitKanpurLogo },
+  { id: 8, name: "IIT Madras", logo: iitMadrasLogo },
+  { id: 9, name: "IIT Patna", logo: iitPatnaLogo },
+  { id: 10, name: "NIT Trichy", logo: nitTrichyLogo },
+  { id: 11, name: "VIT Vellore", logo: vitLogo },
+  { id: 12, name: "IIT mandi", logo: iitm },
+  { id: 13, name: "IIT Kanpur", logo: iitj },
+  { id: 14, name: "IIT Patna", logo: iitp },
+  { id: 15, name: "IIT Ropar", logo: iitropar },
+  { id: 16, name: "IIT Tirupati", logo: iitt },
+  { id: 17, name: "MNIT Jaipur", logo: iitmnit },
+  { id: 18, name: "NIT Calicut", logo: nitc },
+  { id: 19, name: "NIT Durgapur", logo: nitdurga },
+  { id: 20, name: "NIT Jamshedpur", logo: nitj },
+  { id: 21, name: "NIT Karnataka", logo: nitk },
+  { id: 22, name: "NIT Kashmir", logo: nitkk },
+  { id: 23, name: "NIT Patna", logo: nitp },
+  { id: 24, name: "NIT Warangal", logo: nitw },
+  { id: 25, name: "NIT Silchar", logo: nits },
+  { id: 26, name: "VIT Vellore", logo: vit },
+  { id: 27, name: "IIT Kanpur", logo: iitkanpur },
+  { id: 28, name: "IIT Bombay", logo: iitBombayLogo },
+  { id: 29, name: "IIT BHU", logo: iitBhuLogo },
+  { id: 30, name: "IIT Guwahati", logo: iitGuwahatiLogo },
+  { id: 31, name: "IIT Jodhpur", logo: iitJodhpurLogo },
+
+];
 
   // Duplicate the array to ensure smooth infinite animation
   const logosForSliderOne = [...dummyLogos, ...dummyLogos];
@@ -82,27 +135,40 @@ const ClientLogoSlider = () => {
   }, []);
 
   // Logo item component
-  const LogoItem = ({ logo }) => (
-    <div 
-      className="logo-item"
-      style={{
-        minWidth: "180px",
-        height: "100px",
-        margin: "0 1.5rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#f8fafc",
-        borderRadius: "0.5rem",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-        padding: "1rem"
-      }}
-    >
-      {/* This would typically be an image */}
+const LogoItem = ({ logo }) => (
+  <div 
+    className="logo-item"
+    style={{
+      minWidth: "180px",
+      height: "100px",
+      margin: "0 1.5rem",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#f8fafc",
+      borderRadius: "0.5rem",
+      boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+      padding: "1rem"
+    }}
+  >
+    {/* Show Image if logo.logo exists */}
+    {logo.logo ? (
+      <img 
+        src={logo.logo} 
+        alt={logo.name}
+        style={{
+          width: "60px",
+          height: "60px",
+          objectFit: "contain",
+          borderRadius: "5px",
+        }}
+      />
+    ) : (
+      // fallback if no logo is available
       <div style={{
         width: "60px",
         height: "60px",
-        backgroundColor: logo.color,
+        backgroundColor: logo.color || "#ccc",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -113,9 +179,13 @@ const ClientLogoSlider = () => {
       }}>
         {logo.name.substring(0, 2)}
       </div>
-      <span style={{ marginLeft: "1rem", color: "#334155", fontWeight: "500" }}>{logo.name}</span>
-    </div>
-  );
+    )}
+    <span style={{ marginLeft: "1rem", color: "#334155", fontWeight: "500" }}>
+      {logo.name}
+    </span>
+  </div>
+);
+
 
   return (
     <div className="logo-slider-container" style={{ overflow: "hidden" }}>
