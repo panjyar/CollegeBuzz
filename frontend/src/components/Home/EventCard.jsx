@@ -1,6 +1,8 @@
 import React from 'react';
 import { formatDate } from '../../utils/dateUtils';
 import { getCollegeName } from '../../utils/collegeMapper.js';
+import { FiBookmark } from 'react-icons/fi'; // News icon
+import { FaRegCalendarAlt } from 'react-icons/fa'; // Event icon
 
 const EventCard = ({ event }) => {
   const {
@@ -8,12 +10,14 @@ const EventCard = ({ event }) => {
     date,
     url,
     crawledAt,
-    isArchived = false
+    isArchived = false,
+    type = "event" // default is event, but can be "news"
   } = event;
-  
-  // Get college name based on URL
+
   const collegeName = getCollegeName(url);
-  
+
+  const isNews = type === "news";
+
   return (
     <div style={{
       border: "1px solid #e5e7eb",
@@ -21,8 +25,26 @@ const EventCard = ({ event }) => {
       padding: "2rem",
       backgroundColor: isArchived ? "#f9fafb" : "white",
       transition: "transform 0.2s",
-      boxShadow: "0 2px 4px rgba(218, 8, 8, 0.05)"
+      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)"
     }}>
+      
+      {/* Label for News or Event */}
+      <div style={{
+        display: "inline-flex",
+        alignItems: "center",
+        backgroundColor: isNews ? "#fef3c7" : "#dbeafe",
+        color: isNews ? "#92400e" : "#1d4ed8",
+        fontWeight: "600",
+        fontSize: "0.75rem",
+        padding: "0.25rem 0.5rem",
+        borderRadius: "0.5rem",
+        marginBottom: "1rem"
+      }}>
+        {isNews ? <FiBookmark style={{ marginRight: "0.3rem" }} /> : <FaRegCalendarAlt style={{ marginRight: "0.3rem" }} />}
+        {isNews ? "News" : "Event"}
+      </div>
+
+      {/* Event Title */}
       <h3 style={{
         fontSize: "1.1rem",
         fontWeight: "600",
@@ -31,7 +53,8 @@ const EventCard = ({ event }) => {
       }}>
         {title}
       </h3>
-      
+
+      {/* Date and Published date */}
       <div style={{
         display: "flex",
         justifyContent: "space-between",
@@ -42,30 +65,31 @@ const EventCard = ({ event }) => {
           fontSize: "0.9rem",
           color: isArchived ? "#9ca3af" : "#4b5563"
         }}>
-          Event on: {date}
+          {isNews ? "Published on" : "Event on"}: {date}
         </span>
-        
+
         {crawledAt && (
           <span style={{
             fontSize: "0.8rem",
             color: "#9ca3af"
           }}>
-            Published on: {formatDate(crawledAt)}
+            Added: {formatDate(crawledAt)}
           </span>
         )}
       </div>
-      
-      {/* Add college name display */}
-      <p style={{ 
-        fontSize: "0.9rem", 
-        color: "#6b7280", 
-        marginBottom: "1rem" 
+
+      {/* College name */}
+      <p style={{
+        fontSize: "0.9rem",
+        color: "#6b7280",
+        marginBottom: "1rem"
       }}>
         Published by: {collegeName}
       </p>
-      
+
+      {/* View Details Button */}
       {url && (
-        <a 
+        <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"

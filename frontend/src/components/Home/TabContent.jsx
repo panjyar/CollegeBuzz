@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ContentItem from '../common/ContentItem.jsx';
 import ViewArchivedButton from '../common/ViewArchivedButton.jsx';
 import { fetchActiveRecords } from '../../services/apiServices.js';
@@ -8,9 +9,9 @@ const TabContent = ({ activeTab }) => {
   const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortOption, setSortOption] = useState('newest'); // Default sort option
-  const [visibleCount, setVisibleCount] = useState(10); // NEW: how many items to show initially
-  
+  const [sortOption, setSortOption] = useState('newest');
+  const [visibleCount, setVisibleCount] = useState(10);
+
   useEffect(() => {
     const loadContent = async () => {
       setLoading(true);
@@ -26,19 +27,19 @@ const TabContent = ({ activeTab }) => {
         setLoading(false);
       }
     };
-    
+
     loadContent();
-    setVisibleCount(10); // Reset visible count when tab changes
+    setVisibleCount(10);
   }, [activeTab]);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
-    setVisibleCount(10); // Reset visible count when search term changes
+    setVisibleCount(10);
   };
 
   const handleSortChange = (e) => {
     setSortOption(e.target.value);
-    
+
     let sortedContent;
     if (e.target.value === 'newest') {
       sortedContent = sortContentByType(content, activeTab);
@@ -53,11 +54,11 @@ const TabContent = ({ activeTab }) => {
       });
     }
     setContent(sortedContent);
-    setVisibleCount(10); // Reset visible count when sorting changes
+    setVisibleCount(10);
   };
 
   const handleSeeMore = () => {
-    setVisibleCount(prevCount => prevCount + 10);
+    setVisibleCount(prev => prev + 10);
   };
 
   const titleField = getTitleField(activeTab);
@@ -67,25 +68,43 @@ const TabContent = ({ activeTab }) => {
   });
 
   return (
-    <div id="tab-content-section" className="tab-content">
+    <motion.div
+      id="tab-content-section"
+      className="tab-content"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       {loading ? (
-        <div className="loading">Loading...</div>
+        <motion.div
+          className="loading"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          style={{ textAlign: 'center', marginTop: '2rem' }}
+        >
+          Loading...
+        </motion.div>
       ) : (
         <>
-          <div className="tab-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 style={{ margin: 0 }}>{activeTab.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</h2>
-            
-            {/* Sort dropdown */}
+          {/* Header and Sort */}
+          <div className="tab-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: '#1f2937' }}>
+              {activeTab.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            </h2>
+
             <div className="sort-control">
-              <label htmlFor="sort-select" style={{ marginRight: '0.5rem' }}>Sort by:</label>
+              <label htmlFor="sort-select" style={{ marginRight: '0.5rem', fontWeight: '500' }}>Sort:</label>
               <select 
-                id="sort-select" 
-                value={sortOption} 
+                id="sort-select"
+                value={sortOption}
                 onChange={handleSortChange}
                 style={{
-                  padding: '0.5rem',
-                  borderRadius: '0.375rem',
-                  border: '1px solid #d1d5db'
+                  padding: '0.5rem 0.75rem',
+                  borderRadius: '0.5rem',
+                  border: '1px solid #d1d5db',
+                  background: '#f9fafb'
                 }}
               >
                 <option value="newest">Newest</option>
@@ -94,51 +113,76 @@ const TabContent = ({ activeTab }) => {
               </select>
             </div>
           </div>
-          
+
+          {/* Content List */}
           {filteredContent.length > 0 ? (
             <>
-              <ul className="content-list" style={{ listStyleType: 'none', padding: 0 }}>
-                {filteredContent.slice(0, visibleCount).map((item, index) => (
-                  <ContentItem 
-                    key={index}
-                    item={item}
-                    activeTab={activeTab}
-                    index={index}
-                    totalItems={filteredContent.length}
-                    searchTerm={searchTerm}
-                  />
-                ))}
+              <ul className="content-list" style={{ listStyle: 'none', padding: 0 }}>
+                <AnimatePresence>
+                  {filteredContent.slice(0, visibleCount).map((item, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.05 }}
+                      style={{ marginBottom: '1.5rem' }}
+                    >
+                      <ContentItem 
+                        item={item}
+                        activeTab={activeTab}
+                        index={index}
+                        totalItems={filteredContent.length}
+                        searchTerm={searchTerm}
+                      />
+                    </motion.li>
+                  ))}
+                </AnimatePresence>
               </ul>
 
+              {/* See More Button */}
               {visibleCount < filteredContent.length && (
-                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                  <button
+                <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                  <motion.button
                     onClick={handleSeeMore}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     style={{
-                      padding: '0.75rem 1.5rem',
+                      padding: '0.75rem 2rem',
                       fontSize: '1rem',
-                      borderRadius: '0.5rem',
-                      backgroundColor: '#3b82f6',
-                      color: 'white',
+                      fontWeight: '600',
+                      borderRadius: '9999px',
+                      background: 'linear-gradient(90deg, #6366f1, #60a5fa)',
+                      color: '#ffffff',
                       border: 'none',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)'
                     }}
                   >
                     See More
-                  </button>
+                  </motion.button>
                 </div>
               )}
             </>
           ) : (
-            <div className="no-content" style={{ textAlign: 'center', padding: '2rem 0' }}>
-              <p>No {activeTab.replace('_', ' ')} found</p>
-            </div>
+            <motion.div
+              className="no-content"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              style={{ textAlign: 'center', padding: '2rem 0' }}
+            >
+              <p style={{ fontSize: '1.25rem', fontWeight: '500' }}>
+                No {activeTab.replace('_', ' ')} found
+              </p>
+            </motion.div>
           )}
-          
+
+          {/* Archived Button */}
           <ViewArchivedButton category={activeTab} />
         </>
       )}
-    </div>
+    </motion.div>
   );
 };
 

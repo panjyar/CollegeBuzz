@@ -163,7 +163,7 @@ const AboutPage = () => {
 
         {/* Partner Institutions */}
         <section style={{ marginBottom: "4rem" }}>
-          <h2 style={{ fontSize: "2rem", marginBottom: "1rem", textAlign: "center", color: "#1e3a8a" }}>Our Partner Institutions</h2>
+          <h2 style={{ fontSize: "2rem", marginBottom: "1rem", textAlign: "center", color: "#1e3a8a" }}>Institutions List</h2>
           <p style={{ textAlign: "center", color: "#4b5563", marginBottom: "2rem" }}>
             Proud to collaborate with leading educational institutions across India.
           </p>

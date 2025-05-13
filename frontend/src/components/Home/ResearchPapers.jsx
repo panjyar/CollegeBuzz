@@ -26,7 +26,7 @@ const ResearchPapers = ({ papers, handleTabChange }) => {
         justifyContent: "space-between",
         alignItems: "center"
       }}>
-        Recent Research Papers
+        Latest Research Papers
         <a 
           href="#" 
           onClick={handleViewAllResearch}
