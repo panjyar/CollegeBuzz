@@ -1,6 +1,6 @@
-# NewsBuzz Project
+# CollegeBuzz Project
 
-NewsBuzz is a web application that aggregates news and information from various sources, featuring user authentication, archived content browsing, and a responsive frontend interface.
+CollegeBuzz is a web application that aggregates news and information from various sources, featuring user authentication, archived content browsing, and a responsive frontend interface.
 
 ## Project Structure
 
@@ -20,7 +20,7 @@ Before running the project, ensure you have the following installed:
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/panjyar/CollegeBuzz
-cd newsbuzz
+cd CollegeBuzz
 ```
 
 ### 2. Set up Python virtual environment
@@ -46,7 +46,7 @@ pip install -r requirements.txt
 ### 4. Configure environment variables
 Create or modify the `.env` file in the backend directory with the following information:
 ```
-MONGODB_URI=mongodb://localhost:27017/newsbuzz
+MONGODB_URI=mongodb://localhost:27017/CollegeBuzz
 JWT_SECRET_KEY=your_very_secure_secret_key
 ```
 
