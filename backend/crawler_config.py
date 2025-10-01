@@ -4,6 +4,80 @@
 
 urls = [
     {
+    "url": "https://nitc.ac.in/noticeboard/admissions, https://nitc.ac.in/noticeboard/recruitments, https://nitc.ac.in/purchase-section/tenders",
+    "schema": {
+        "name": "NIT Calicut Website Data",
+        "baseSelector": "body",  # Adding a base selector that covers the entire document
+        "fields": [
+            # Admissions and Recruitments sections (similar structure)
+            {
+                "name": "section_titles",
+                "selector": "h6.xc-page-title-underline",
+                "type": "text",
+                "multiple": True
+            },
+            {
+                "name": "items",
+                "selector": "ul.xc-calendar-list-v4 li",
+                "type": "nested",
+                "multiple": True,
+                "fields": [
+                    {
+                        "name": "item_title",
+                        "selector": "div.xc-c-name p.c-name",
+                        "type": "text"
+                    },
+                    {
+                        "name": "item_url",
+                        "selector": "div.xc-c-name a",
+                        "type": "attribute",
+                        "attribute": "href"
+                    },
+                    {
+                        "name": "is_new",
+                        "selector": "div.xc-c-name p.c-name img",
+                        "type": "exists"
+                    }
+                ]
+            },
+            
+            # Tenders section (different structure)
+            {
+                "name": "tender_departments",
+                "selector": "div.xc-academic-calendar-box p.xc-calendar-year",
+                "type": "text",
+                "multiple": True
+            },
+            {
+                "name": "tender_items",
+                "selector": "ul.xc-calendar-list li",
+                "type": "nested",
+                "multiple": True,
+                "fields": [
+                    {
+                        "name": "tender_title",
+                        "selector": "div.xc-c-name p.c-name",
+                        "type": "text"
+                    },
+                    {
+                        "name": "tender_url",
+                        "selector": "div.xc-c-name a",
+                        "type": "attribute",
+                        "attribute": "href"
+                    },
+                    {
+                        "name": "tender_download_url",
+                        "selector": "div.xc-c-action a.xc-c-download",
+                        "type": "attribute",
+                        "attribute": "href"
+                    }
+                ]
+            }
+        ]
+    }
+}
+,
+    {
   "url": "https://www.nitk.ac.in/",
   "schema": {
     "name": "NITK Website Data",
@@ -49,28 +123,10 @@ urls = [
     "name": "IIT Jammu Information",
     "baseSelector": "div.row ng-star-inserted div.col-md-3 , div.container div.row  ul", 
     "fields": [
-      {
-        "name": "news",
-        "selector": "div.ng-star-inserted a h3",
-        "type": "text"
-      },
-      {
-        "name": "news_url",
-        "selector": "div.ng-star-inserted a",
-        "type": "attribute",
-        "attribute": "href"
-      },
-      {
-        "name": "news",
-        "selector": "ul div.ng-star-inserted a ",
-        "type": "text"
-      },
-      {
-        "name": "news_url",
-        "selector": "ul div.ng-star-inserted a ",
-        "type": "attribute",
-        "attribute": "href"
-      }
+      {"name": "news","selector": "div.ng-star-inserted a h3","type": "text"},
+      {"name": "news_url","selector": "div.ng-star-inserted a","type": "attribute","attribute": "href"},
+      {"name": "news","selector": "ul div.ng-star-inserted a ","type": "text"},
+      {"name": "news_url","selector": "ul div.ng-star-inserted a ","type": "attribute", "attribute": "href"}
     ]
   }
 },
@@ -82,72 +138,23 @@ urls = [
     "name": "IIT Goa Information",
     "baseSelector": "div.row", 
     "fields": [
-      {
-        "name": "admission",
-        "selector": "div.row center span a",
-        "type": "text"
-      },
-      {
-        "name": "admission_url",
-        "selector": "div.row center span a",
-        "type": "attribute",
-        "attribute": "href"
-      },
-      {
-        "name": "news",
-        "selector": "div[style*='background-color: rgb(0 104 146)'] p a",
-        "type": "text"
-      },
-      {
-        "name": "news_url",
-        "selector": "div[style*='background-color: rgb(0 104 146)'] p a",
-        "type": "attribute",
-        "attribute": "href"
-      },
-      {
-        "name": "news",
-        "selector": "div[style*='height:300px; background-color:white; overflow-y:auto;padding:10px'] p a",
-        "type": "text"
-      },
-      {
-        "name": "news_url",
-        "selector": "div[style*='height:300px; background-color:white; overflow-y:auto;padding:10px'] p a",
-        "type": "attribute",
-        "attribute": "href"
-      },
-      {
-        "name": "research",
-        "selector": "div.col-sm-4:nth-child(2) div[style*='height:300px; background-color:white;'] p a",
-        "type": "text"
-      },
-      {
-        "name": "research_url",
-        "selector": "div.col-sm-4:nth-child(2) div[style*='height:300px; background-color:white;'] p a",
-        "type": "attribute",
-        "attribute": "href"
-      },
-      {
-        "name": "upcoming_Event_title",
-        "selector": "div[style*='background-color:#cccccc;padding: 20px;height:300px;'] p a",
-        "type": "text"
-      },
-      {
-        "name": "upcoming_Event_url",
-        "selector": "div[style*='background-color:#cccccc;padding: 20px;height:300px;'] p a",
-        "type": "attribute",
-        "attribute": "href"
-      },
-      {
-        "name": "admssion",
-        "selector": "div[style*='padding: 10px; border:1px solid #cccccc;background-color:white;font-size:15px;'] marquee a",
-        "type": "text"
-      },
-      {
-        "name": "admission_url",
-        "selector": "div[style*='padding: 10px; border:1px solid #cccccc;background-color:white;font-size:15px;'] marquee a",
-        "type": "attribute",
-        "attribute": "href"
-      }
+      {"name": "admission","selector": "div.row center span a","type": "text"},
+      {"name": "admission_url","selector": "div.row center span a","type": "attribute","attribute": "href"},
+      
+      {"name": "news","selector": "div[style*='background-color: rgb(0 104 146)'] p a","type": "text"},
+      {"name": "news_url","selector": "div[style*='background-color: rgb(0 104 146)'] p a","type": "attribute","attribute": "href"},
+      
+      {"name": "news","selector": "div[style*='height:300px; background-color:white; overflow-y:auto;padding:10px'] p a","type": "text"},
+      {"name": "news_url","selector": "div[style*='height:300px; background-color:white; overflow-y:auto;padding:10px'] p a","type": "attribute","attribute": "href"},
+      
+      {"name": "research","selector": "div.col-sm-4:nth-child(2) div[style*='height:300px; background-color:white;'] p a","type": "text"},
+      {"name": "research_url","selector": "div.col-sm-4:nth-child(2) div[style*='height:300px; background-color:white;'] p a","type": "attribute","attribute": "href"},
+      
+      {"name": "upcoming_Event_title","selector": "div[style*='background-color:#cccccc;padding: 20px;height:300px;'] p a","type": "text"},
+      {"name": "upcoming_Event_url","selector": "div[style*='background-color:#cccccc;padding: 20px;height:300px;'] p a","type": "attribute","attribute": "href"},
+      
+      {"name": "admssion","selector": "div[style*='padding: 10px; border:1px solid #cccccc;background-color:white;font-size:15px;'] marquee a","type": "text"},
+      {"name": "admission_url","selector": "div[style*='padding: 10px; border:1px solid #cccccc;background-color:white;font-size:15px;'] marquee a","type": "attribute","attribute": "href"}
     ]
   }
 },
@@ -157,64 +164,15 @@ urls = [
     "name": "IIT Dharwad Information",
     "baseSelector": "#block-base-homepageannouncements div.body ul li, #block-base-views-block-news-block-1 div.view-wrapper > div , div#block-base-views-block-events-block-3 div.view-wrapper > div , div#block-base-views-block-gallery-block-1 .view-wrapper > div",
     "fields": [
-      {
-        "name": "recruitment_title",
-        "selector": "div.body ul li a",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "recruitment_url",
-        "selector": "div.body ul li a",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      },
-      {
-        "name": "news_title",
-        "selector": "div.views-field-title .title a",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "news_url",
-        "selector": "div.views-field-title .title a",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      },
-      {
-        "name": "news",
-        "selector": "div.views-field-title .title a",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "news_url",
-        "selector": "div.views-field-title .title a",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      },
-      {
-        "name": "upcoming_event_title",
-        "selector": "div.views-field-title .title a",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "upcoming_event_url",
-        "selector": "div.views-field-title .title a",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      },
-      {
-          "name": "upcoming_Event_date",
-          "selector": ".views-field-field-date-ran .field_date_ran",
-          "type": "text",
-          "multiple": True
-      }
+      {"name": "recruitment_title","selector": "div.body ul li a","type": "text","multiple": True},
+      {"name": "recruitment_url","selector": "div.body ul li a","type": "attribute","attribute": "href","multiple": True},
+      {"name": "news_title","selector": "div.views-field-title .title a","type": "text","multiple": True},
+      {"name": "news_url","selector": "div.views-field-title .title a","type": "attribute","attribute": "href","multiple": True},
+      {"name": "news","selector": "div.views-field-title .title a","type": "text","multiple": True},
+      {"name": "news_url","selector": "div.views-field-title .title a","type": "attribute","attribute": "href","multiple": True},
+      {"name": "upcoming_event_title","selector": "div.views-field-title .title a","type": "text","multiple": True},
+      {"name": "upcoming_event_url","selector": "div.views-field-title .title a","type": "attribute","attribute": "href","multiple": True},
+      {"name": "upcoming_Event_date","selector": ".views-field-field-date-ran .field_date_ran","type": "text","multiple": True}
     ]
   }
 }
@@ -226,43 +184,12 @@ urls = [
     "name": "IIT Bhilai Information",
     "baseSelector": "div.well.welltheme li , div.well.wellpaleyellow ul li, div.col-md-8 div.row div.col-md-11.col-sm-11.col-xs-11",
     "fields": [
-      {
-        "name": "news_title",
-        "selector": "div.well.welltheme li a b",
-        "type": "text"
-      },
-      {
-        "name": "news_url",
-        "selector": "div.well.welltheme li a",
-        "type": "attribute",
-        "attribute": "href"
-      },
-      {
-        "name": "upcoming_Event_title",
-        "selector": "div.well.wellpaleyellow ul li a",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "upcoming_Event_url",
-        "selector": "div.well.wellpaleyellow ul li a",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      },
-      {
-        "name": "research",
-        "selector": "div.col-md-8 div.row div.col-md-11.col-sm-11.col-xs-11 a",
-        "type": "text",
-        "multiple": True
-      },
-      {
-        "name": "research_url",
-        "selector": "div.col-md-8 div.row div.col-md-11.col-sm-11.col-xs-11 a",
-        "type": "attribute",
-        "attribute": "href",
-        "multiple": True
-      }
+      {"name": "news_title","selector": "div.well.welltheme li a b","type": "text"},
+      {"name": "news_url","selector": "div.well.welltheme li a","type": "attribute","attribute": "href"},
+      {"name": "upcoming_Event_title","selector": "div.well.wellpaleyellow ul li a","type": "text","multiple": True},
+      {"name": "upcoming_Event_url","selector": "div.well.wellpaleyellow ul li a","type": "attribute","attribute": "href","multiple": True},
+      {"name": "research","selector": "div.col-md-8 div.row div.col-md-11.col-sm-11.col-xs-11 a","type": "text","multiple": True},
+      {"name": "research_url","selector": "div.col-md-8 div.row div.col-md-11.col-sm-11.col-xs-11 a","type": "attribute", "attribute": "href","multiple": True}
     ]
   }
 }
@@ -274,58 +201,18 @@ urls = [
     "name": "IIT trirupati Information",
     "baseSelector": "div.marquee-container, div.scrollbar2, div.scrollbar3, section.event.pt-80", 
     "fields": [
-      {
-        "name": "admission",
-        "selector": "div.marquee div.initial-child-container div.child a",
-        "type": "text"
-      },
-      {
-        "name": "admission_url",
-        "selector": "div.marquee div.initial-child-container div.child a",
-        "type": "attribute",
-        "attribute": "href"
-      },
+      {"name": "admission","selector": "div.marquee div.initial-child-container div.child a","type": "text"},
+      {"name": "admission_url","selector": "div.marquee div.initial-child-container div.child a","type": "attribute","attribute": "href"},
 
-      {
-        "name": "news",
-        "selector": "div.scrollbar2 div.event-item.mb-10.hover-zoomin div.text h6 a",
-        "type": "text"
-      },
-      {
-        "name": "news_url",
-        "selector": "div.scrollbar2 div.event-item.mb-10.hover-zoomin div.text h6 a",
-        "type": "attribute",
-        "attribute": "href"
-      },
+      {"name": "news","selector": "div.scrollbar2 div.event-item.mb-10.hover-zoomin div.text h6 a","type": "text"},
+      {"name": "news_url","selector": "div.scrollbar2 div.event-item.mb-10.hover-zoomin div.text h6 a","type": "attribute","attribute": "href"},
 
-      {
-        "name": "upcoming_Event_title",
-        "selector": "section.event.pt-80 div.event-item h3 a",
-        "type": "text"
-      },
-      {
-        "name": "upcoming_Event_date",
-        "selector": "section.event.pt-80 div.event-item div.date strong",
-        "type": "text"
-      },
-      {
-        "name": "upcoming_Event_url",
-        "selector": "section.event.pt-80 div.event-item h3 a",
-        "type": "attribute",
-        "attribute": "href"
-      },
+      {"name": "upcoming_Event_title","selector": "section.event.pt-80 div.event-item h3 a","type": "text"},
+      {"name": "upcoming_Event_date","selector": "section.event.pt-80 div.event-item div.date strong","type": "text"},
+      {"name": "upcoming_Event_url","selector": "section.event.pt-80 div.event-item h3 a","type": "attribute","attribute": "href"},
 
-      {
-        "name": "recruitment_title",
-        "selector": "div.scrollbar3 div.event-item.mb-10.hover-zoomin h6 a",
-        "type": "text"
-      },
-      {
-        "name": "recruitment_url",
-        "selector": "div.scrollbar3 div.event-item.mb-10.hover-zoomin h6 a",
-        "type": "attribute",
-        "attribute": "href"
-      }
+      {"name": "recruitment_title","selector": "div.scrollbar3 div.event-item.mb-10.hover-zoomin h6 a","type": "text"},
+      {"name": "recruitment_url","selector": "div.scrollbar3 div.event-item.mb-10.hover-zoomin h6 a","type": "attribute","attribute": "href"}
     ]
   }
 }
