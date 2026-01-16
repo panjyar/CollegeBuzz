@@ -7,9 +7,8 @@ urls = [
     "url": "https://nitc.ac.in/noticeboard/admissions, https://nitc.ac.in/noticeboard/recruitments, https://nitc.ac.in/purchase-section/tenders",
     "schema": {
         "name": "NIT Calicut Website Data",
-        "baseSelector": "body",  # Adding a base selector that covers the entire document
+        "baseSelector": "body",  
         "fields": [
-            # Admissions and Recruitments sections (similar structure)
             {
                 "name": "section_titles",
                 "selector": "h6.xc-page-title-underline",
@@ -41,7 +40,6 @@ urls = [
                 ]
             },
             
-            # Tenders section (different structure)
             {
                 "name": "tender_departments",
                 "selector": "div.xc-academic-calendar-box p.xc-calendar-year",

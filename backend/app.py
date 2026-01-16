@@ -32,6 +32,10 @@ except Exception as e:
 def convert_mongo_to_json(mongo_data):
     return json.loads(json_util.dumps(mongo_data))
 
+@app.route('/', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy", "service": "CollegeBuzz API"}), 200
+
 @app.route('/api/', methods=['GET'])
 def home():
     collections = ["notices", "tenders", "upcoming_events", "recruitments", "admissions", "news", "research"]
@@ -89,5 +93,5 @@ def test_db():
         return jsonify({"status": "error", "message": str(e)})
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8080)) 
+    port = int(os.environ.get('PORT', 5000)) 
     app.run(debug=False, host='0.0.0.0', port=port)

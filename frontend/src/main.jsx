@@ -1,52 +1,36 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import App from './App.jsx'
 import './index.css'
-import LoginPage from './pages/LoginPage.jsx'
-import RegisterPage from './pages/RegisterPage.jsx'
 import HomePage from './pages/HomePage.jsx'
+import AnnouncementsPage from './pages/AnnouncementsPage.jsx'
 import ArchivedPage from './pages/ArchivedPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
-import { AuthProvider } from './context/AuthContext.jsx'
-
-// Define collections array to match the one in HomePage
-const collections = [
-  "news", "notices", "tenders", 
-  "upcoming_events", "recruitments", 
-  "admissions", "research"
-];
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter basename="/">
-      <AuthProvider>
-        <Routes>
-          {/* Redirect root to default home/news */}
-          <Route path="/" element={<Navigate to="/home/news" replace />} />
-          
-          {/* Auth routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          
-          {/* Home route with tab parameter */}
-          <Route path="/home/:tabName" element={<HomePage />} />
-          
-          {/* Archive routes */}
-          <Route path="/archived/:category" element={<ArchivedPage />} />
-          
-          {/* About page route */}
-          <Route path="/about" element={<AboutPage />} />
-          
-          {/* Additional pages can be added here */}
-          <Route path="/privacy-policy" element={<div>Privacy Policy Page (Coming Soon)</div>} />
-          <Route path="/terms" element={<div>Terms of Service Page (Coming Soon)</div>} />
-          <Route path="/sitemap" element={<div>Sitemap Page (Coming Soon)</div>} />
-          
-          {/* Catch-all route - redirect to default home */}
-          <Route path="*" element={<Navigate to="/home/news" replace />} />
-        </Routes>
-      </AuthProvider>
+      <Routes>
+        {/* Landing page */}
+        <Route path="/" element={<HomePage />} />
+
+        {/* Announcements listing by category */}
+        <Route path="/home/:tabName" element={<AnnouncementsPage />} />
+
+        {/* Archive routes */}
+        <Route path="/archive" element={<ArchivedPage />} />
+        <Route path="/archived/:category" element={<ArchivedPage />} />
+
+        {/* About page */}
+        <Route path="/about" element={<AboutPage />} />
+
+        {/* Static pages */}
+        <Route path="/privacy-policy" element={<div style={{ padding: "4rem 2rem", maxWidth: "800px", margin: "0 auto" }}><h1>Privacy Policy</h1><p>Coming soon...</p></div>} />
+        <Route path="/terms" element={<div style={{ padding: "4rem 2rem", maxWidth: "800px", margin: "0 auto" }}><h1>Terms of Service</h1><p>Coming soon...</p></div>} />
+
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </BrowserRouter>
   </React.StrictMode>
 )

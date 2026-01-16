@@ -1,177 +1,309 @@
-import React from "react";
-import Layout from "../components/Layout/Layout.jsx";
-import { FaGraduationCap, FaUniversity, FaUsers, FaChartLine, FaLightbulb, FaHandshake } from "react-icons/fa";
-import ClientLogos from "../components/About/ClientLogos.jsx";
-import heroimg from "../assets/img1.jpg";
+// src/pages/AboutPage.jsx
+import React from 'react';
+import Layout from '../components/Layout/Layout.jsx';
+import { Link } from 'react-router-dom';
+import {
+  Target, Users, Globe, Shield,
+  Newspaper, Calendar, FileText, GraduationCap,
+  ArrowRight
+} from 'lucide-react';
+
+const features = [
+  {
+    icon: Newspaper,
+    title: "College News",
+    description: "Stay informed with the latest announcements and updates from institutions across India."
+  },
+  {
+    icon: Calendar,
+    title: "Events & Workshops",
+    description: "Discover upcoming conferences, seminars, and academic events."
+  },
+  {
+    icon: FileText,
+    title: "Tenders & Notices",
+    description: "Access procurement notices and official tenders from colleges."
+  },
+  {
+    icon: GraduationCap,
+    title: "Research Updates",
+    description: "Explore academic achievements and research publications."
+  }
+];
+
+const values = [
+  {
+    icon: Target,
+    title: "Accessibility",
+    description: "Making college information easily accessible to everyone, everywhere."
+  },
+  {
+    icon: Users,
+    title: "Community",
+    description: "Built for students, educators, and administrators across India."
+  },
+  {
+    icon: Globe,
+    title: "Transparency",
+    description: "Aggregating publicly available data from official sources."
+  },
+  {
+    icon: Shield,
+    title: "Independence",
+    description: "An independent platform, not affiliated with any government body."
+  }
+];
+
 const AboutPage = () => {
   return (
     <Layout>
-      <div className="about-page" style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem 1rem" }}>
-        {/* Hero Section */}
-        <section 
-          style={{ 
-            textAlign: "center", 
-            marginBottom: "4rem",
-            background: `url(${heroimg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            color: "white",
-            padding: "5rem 2rem",
-            borderRadius: "8px"
-          }}
-        >
-          <h1 style={{ fontSize: "2.5rem", marginBottom: "1.5rem", fontWeight: "700" }}>About AICTE Central Hub</h1>
-          <p style={{ fontSize: "1.2rem", maxWidth: "800px", margin: "0 auto", lineHeight: "1.8" }}>
-            Connecting educational institutions across India to build a stronger, more unified educational ecosystem.
-          </p>
-        </section>
-
-        {/* Our Mission */}
-        <section style={{ marginBottom: "4rem" }}>
-          <h2 style={{ fontSize: "2rem", marginBottom: "1.5rem", textAlign: "center", color: "#1e3a8a" }}>Our Mission</h2>
-          <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
-            <div style={{ flex: "1 1 400px" }}>
-              <p style={{ fontSize: "1.1rem", lineHeight: "1.8", color: "#4b5563" }}>
-                The AICTE Central Hub was established with a clear vision: to create a unified platform that seamlessly connects all AICTE-approved institutions across India. Our mission is to bridge information gaps, foster collaboration between educational institutions, and provide students, educators, and stakeholders with immediate access to essential educational resources and updates.
-              </p>
-              <p style={{ fontSize: "1.1rem", lineHeight: "1.8", color: "#4b5563", marginTop: "1rem" }}>
-                We strive to enhance the quality of technical education by facilitating easy access to important announcements, opportunities, and resources from various institutions. By aggregating this information in one central location, we empower students to make informed decisions about their educational journey and help institutions stay connected to the broader educational ecosystem.
-              </p>
-            </div>
-            <div style={{ flex: "1 1 400px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <div style={{ 
-                width: "300px", 
-                height: "300px", 
-                backgroundColor: "#1e3a8a", 
-                borderRadius: "50%", 
-                display: "flex", 
-                justifyContent: "center", 
-                alignItems: "center",
-                color: "white"
-              }}>
-                <FaGraduationCap size={120} />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Key Features */}
-        <section style={{ marginBottom: "4rem", backgroundColor: "#f3f4f6", padding: "3rem 2rem", borderRadius: "8px" }}>
-          <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textAlign: "center", color: "#1e3a8a" }}>Key Features</h2>
-          <div style={{ 
-            display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
-            gap: "2rem" 
+      {/* Hero Section */}
+      <section style={{
+        backgroundColor: "#FFFFFF",
+        padding: "5rem 1.5rem",
+        borderBottom: "1px solid #D4D4D4"
+      }}>
+        <div style={{
+          maxWidth: "700px",
+          margin: "0 auto",
+          textAlign: "center"
+        }}>
+          <div style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            padding: "0.5rem 1rem",
+            backgroundColor: "#F8F8F8",
+            borderRadius: "9999px",
+            fontSize: "0.875rem",
+            color: "#666666",
+            marginBottom: "1.5rem",
+            border: "1px solid #D4D4D4"
           }}>
-            <div style={{ textAlign: "center", padding: "1.5rem" }}>
-              <FaUniversity size={50} style={{ color: "#1e3a8a", marginBottom: "1rem" }} />
-              <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#1f2937" }}>Comprehensive Database</h3>
-              <p style={{ color: "#4b5563" }}>Access information from thousands of AICTE-approved institutions through a single platform.</p>
-            </div>
-            <div style={{ textAlign: "center", padding: "1.5rem" }}>
-              <FaUsers size={50} style={{ color: "#1e3a8a", marginBottom: "1rem" }} />
-              <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#1f2937" }}>Community Building</h3>
-              <p style={{ color: "#4b5563" }}>Connect students, educators, and institutions to foster collaboration and knowledge sharing.</p>
-            </div>
-            <div style={{ textAlign: "center", padding: "1.5rem" }}>
-              <FaChartLine size={50} style={{ color: "#1e3a8a", marginBottom: "1rem" }} />
-              <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#1f2937" }}>Real-time Updates</h3>
-              <p style={{ color: "#4b5563" }}>Stay informed with the latest announcements, events, and opportunities from institutions nationwide.</p>
-            </div>
+            About CollegeBuzz
           </div>
-        </section>
 
-        {/* Our Values */}
-        <section style={{ marginBottom: "4rem" }}>
-          <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textAlign: "center", color: "#1e3a8a" }}>Our Values</h2>
-          <div style={{ 
-            display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
-            gap: "2rem" 
+          <h1 style={{
+            fontSize: "2.5rem",
+            fontWeight: "800",
+            color: "#2B2B2B",
+            lineHeight: "1.2",
+            marginBottom: "1.25rem"
           }}>
-            <div style={{ 
-              padding: "2rem", 
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", 
-              borderRadius: "8px", 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center" 
-            }}>
-              <div style={{ 
-                backgroundColor: "#e0e7ff", 
-                borderRadius: "50%", 
-                width: "80px", 
-                height: "80px", 
-                display: "flex", 
-                justifyContent: "center", 
-                alignItems: "center", 
-                marginBottom: "1.5rem" 
-              }}>
-                <FaLightbulb size={40} style={{ color: "#1e3a8a" }} />
-              </div>
-              <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#1f2937", textAlign: "center" }}>Innovation</h3>
-              <p style={{ color: "#4b5563", textAlign: "center" }}>We constantly seek new ways to improve access to educational information and resources.</p>
-            </div>
-            <div style={{ 
-              padding: "2rem", 
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", 
-              borderRadius: "8px", 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center" 
-            }}>
-              <div style={{ 
-                backgroundColor: "#e0e7ff", 
-                borderRadius: "50%", 
-                width: "80px", 
-                height: "80px", 
-                display: "flex", 
-                justifyContent: "center", 
-                alignItems: "center", 
-                marginBottom: "1.5rem" 
-              }}>
-                <FaHandshake size={40} style={{ color: "#1e3a8a" }} />
-              </div>
-              <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#1f2937", textAlign: "center" }}>Collaboration</h3>
-              <p style={{ color: "#4b5563", textAlign: "center" }}>We believe in the power of working together to achieve greater educational outcomes.</p>
-            </div>
-            <div style={{ 
-              padding: "2rem", 
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", 
-              borderRadius: "8px", 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center" 
-            }}>
-              <div style={{ 
-                backgroundColor: "#e0e7ff", 
-                borderRadius: "50%", 
-                width: "80px", 
-                height: "80px", 
-                display: "flex", 
-                justifyContent: "center", 
-                alignItems: "center", 
-                marginBottom: "1.5rem" 
-              }}>
-                <FaUsers size={40} style={{ color: "#1e3a8a" }} />
-              </div>
-              <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#1f2937", textAlign: "center" }}>Accessibility</h3>
-              <p style={{ color: "#4b5563", textAlign: "center" }}>We are committed to making educational information accessible to all stakeholders.</p>
-            </div>
-          </div>
-        </section>
+            One Platform for All
+            <br />College Updates
+          </h1>
 
-        {/* Partner Institutions */}
-        <section style={{ marginBottom: "4rem" }}>
-          <h2 style={{ fontSize: "2rem", marginBottom: "1rem", textAlign: "center", color: "#1e3a8a" }}>Institutions List</h2>
-          <p style={{ textAlign: "center", color: "#4b5563", marginBottom: "2rem" }}>
-            Proud to collaborate with leading educational institutions across India.
+          <p style={{
+            fontSize: "1.125rem",
+            color: "#666666",
+            lineHeight: "1.7"
+          }}>
+            CollegeBuzz aggregates news, events, tenders, and research updates from
+            AICTE-approved colleges across India. Our mission is to make college
+            information accessible to everyone.
           </p>
-          
-          {/* Client Logo Carousel Component */}
-          <ClientLogos />
-        </section>
-      </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section style={{
+        backgroundColor: "#F8F8F8",
+        padding: "4rem 1.5rem"
+      }}>
+        <div style={{
+          maxWidth: "1000px",
+          margin: "0 auto"
+        }}>
+          <h2 style={{
+            fontSize: "1.75rem",
+            fontWeight: "700",
+            color: "#2B2B2B",
+            textAlign: "center",
+            marginBottom: "2.5rem"
+          }}>
+            What We Offer
+          </h2>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "1.5rem"
+          }}>
+            {features.map((feature, index) => (
+              <div key={index} style={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "12px",
+                padding: "1.5rem",
+                border: "1px solid #D4D4D4"
+              }}>
+                <feature.icon size={28} style={{ color: "#2B2B2B", marginBottom: "1rem" }} />
+                <h3 style={{
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  color: "#2B2B2B",
+                  marginBottom: "0.5rem"
+                }}>
+                  {feature.title}
+                </h3>
+                <p style={{
+                  fontSize: "0.875rem",
+                  color: "#666666",
+                  lineHeight: "1.5",
+                  margin: 0
+                }}>
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Values Section */}
+      <section style={{
+        backgroundColor: "#FFFFFF",
+        padding: "4rem 1.5rem"
+      }}>
+        <div style={{
+          maxWidth: "1000px",
+          margin: "0 auto"
+        }}>
+          <h2 style={{
+            fontSize: "1.75rem",
+            fontWeight: "700",
+            color: "#2B2B2B",
+            textAlign: "center",
+            marginBottom: "2.5rem"
+          }}>
+            Our Values
+          </h2>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "1.5rem"
+          }}>
+            {values.map((value, index) => (
+              <div key={index} style={{ textAlign: "center" }}>
+                <div style={{
+                  width: "56px",
+                  height: "56px",
+                  backgroundColor: "#F8F8F8",
+                  borderRadius: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 1rem"
+                }}>
+                  <value.icon size={24} style={{ color: "#2B2B2B" }} />
+                </div>
+                <h3 style={{
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  color: "#2B2B2B",
+                  marginBottom: "0.5rem"
+                }}>
+                  {value.title}
+                </h3>
+                <p style={{
+                  fontSize: "0.875rem",
+                  color: "#666666",
+                  lineHeight: "1.5",
+                  margin: 0
+                }}>
+                  {value.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Disclaimer Section */}
+      <section style={{
+        backgroundColor: "#F8F8F8",
+        padding: "3rem 1.5rem"
+      }}>
+        <div style={{
+          maxWidth: "700px",
+          margin: "0 auto",
+          textAlign: "center"
+        }}>
+          <div style={{
+            backgroundColor: "#FFFFFF",
+            padding: "2rem",
+            borderRadius: "12px",
+            border: "1px solid #D4D4D4"
+          }}>
+            <Shield size={32} style={{ color: "#B3B3B3", marginBottom: "1rem" }} />
+            <h3 style={{
+              fontSize: "1.125rem",
+              fontWeight: "600",
+              color: "#2B2B2B",
+              marginBottom: "0.75rem"
+            }}>
+              Important Disclaimer
+            </h3>
+            <p style={{
+              fontSize: "0.9375rem",
+              color: "#666666",
+              lineHeight: "1.6",
+              margin: 0
+            }}>
+              CollegeBuzz is an independent platform and is <strong>not affiliated with AICTE,
+                any government body, or any educational institution</strong>. We aggregate publicly
+              available information for informational purposes only.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section style={{
+        backgroundColor: "#2B2B2B",
+        padding: "4rem 1.5rem"
+      }}>
+        <div style={{
+          maxWidth: "600px",
+          margin: "0 auto",
+          textAlign: "center"
+        }}>
+          <h2 style={{
+            fontSize: "1.75rem",
+            fontWeight: "700",
+            color: "#FFFFFF",
+            marginBottom: "1rem"
+          }}>
+            Start Exploring
+          </h2>
+          <p style={{
+            fontSize: "1rem",
+            color: "#B3B3B3",
+            marginBottom: "1.5rem"
+          }}>
+            Browse announcements from hundreds of AICTE-approved colleges
+          </p>
+          <Link
+            to="/home/news"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "0.875rem 1.5rem",
+              backgroundColor: "#FFFFFF",
+              color: "#2B2B2B",
+              borderRadius: "8px",
+              fontSize: "1rem",
+              fontWeight: "500",
+              textDecoration: "none"
+            }}
+          >
+            Browse Announcements
+            <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
     </Layout>
   );
 };

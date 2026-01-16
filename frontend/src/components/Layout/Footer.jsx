@@ -1,130 +1,171 @@
 import React from "react";
-import { MapPin, Phone, Mail, Globe, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
-import { categories } from "../../utils/fieldMappings.js";
 import { Link } from "react-router-dom";
-import NewsletterSubscribe from "../common/NewsletterSubscribe.jsx";
 
-const Footer = ({ handleTabChange }) => {
+const categories = [
+  { name: "News", path: "/home/news" },
+  { name: "Notices", path: "/home/notices" },
+  { name: "Tenders", path: "/home/tenders" },
+  { name: "Events", path: "/home/upcoming_events" },
+  { name: "Recruitments", path: "/home/recruitments" },
+  { name: "Admissions", path: "/home/admissions" },
+  { name: "Research", path: "/home/research" },
+];
+
+const Footer = () => {
   return (
     <footer style={{
-      backgroundColor: "#1e3a8a",
-      color: "white",
-      padding: "3rem 2rem",
-      marginTop: "3rem"
+      backgroundColor: "#2B2B2B",
+      color: "#FFFFFF",
+      marginTop: "auto"
     }}>
+      {/* Main Footer Content */}
       <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-        gap: "2rem",
         maxWidth: "1200px",
-        margin: "0 auto"
+        margin: "0 auto",
+        padding: "3rem 1.5rem"
       }}>
-        {/* About Column */}
-        <div>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "1rem" }}>About AICTE Central Hub</h3>
-          <p style={{ lineHeight: "1.6", fontSize: "0.95rem", color: "#e2e8f0" }}>
-            AICTE Central Hub is a comprehensive platform that aggregates information from AICTE-approved institutions across India, providing a single point of access for students, educators, and stakeholders.
-          </p>
-          <Link 
-            to="/about" 
-            style={{ 
-              display: "inline-block", 
-              marginTop: "0.75rem", 
-              color: "#e2e8f0", 
-              textDecoration: "underline", 
-              fontSize: "0.95rem" 
-            }}
-          >
-            Learn more about us
-          </Link>
-        </div>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "2rem"
+        }}>
+          {/* Brand Column */}
+          <div>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              marginBottom: "1rem"
+            }}>
+              <div style={{
+                width: "32px",
+                height: "32px",
+                backgroundColor: "#FFFFFF",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "800",
+                fontSize: "1.25rem",
+                color: "#2B2B2B"
+              }}>
+                C
+              </div>
+              <span style={{ fontSize: "1.25rem", fontWeight: "700" }}>CollegeBuzz</span>
+            </div>
+            <p style={{
+              fontSize: "0.875rem",
+              color: "#B3B3B3",
+              lineHeight: "1.6",
+              maxWidth: "280px"
+            }}>
+              Aggregating news, events, and updates from AICTE-approved colleges across India.
+            </p>
+          </div>
 
-        {/* Quick Links */}
-        <div>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "1rem" }}>Quick Links</h3>
-          <ul style={{ listStyleType: "none", padding: 0 }}>
-            {categories.map((category) => (
-              <li key={category} style={{ marginBottom: "0.75rem" }}>
-                <Link
-                  to={`/home/${category}`}
-                  style={{ 
-                    color: "#e2e8f0", 
-                    textDecoration: "none",
-                    transition: "color 0.2s"
-                  }}
-                >
-                  {category.replace("_", " ").charAt(0).toUpperCase() + category.replace("_", " ").slice(1)}
+          {/* Categories */}
+          <div>
+            <h4 style={{
+              fontSize: "0.875rem",
+              fontWeight: "600",
+              marginBottom: "1rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em"
+            }}>
+              Categories
+            </h4>
+            <ul style={{ listStyle: "none", padding: 0 }}>
+              {categories.slice(0, 5).map((cat) => (
+                <li key={cat.name} style={{ marginBottom: "0.5rem" }}>
+                  <Link
+                    to={cat.path}
+                    style={{
+                      color: "#B3B3B3",
+                      fontSize: "0.875rem",
+                      textDecoration: "none",
+                      transition: "color 0.15s ease"
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = "#FFFFFF"}
+                    onMouseLeave={(e) => e.target.style.color = "#B3B3B3"}
+                  >
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 style={{
+              fontSize: "0.875rem",
+              fontWeight: "600",
+              marginBottom: "1rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em"
+            }}>
+              Quick Links
+            </h4>
+            <ul style={{ listStyle: "none", padding: 0 }}>
+              <li style={{ marginBottom: "0.5rem" }}>
+                <Link to="/about" style={{ color: "#B3B3B3", fontSize: "0.875rem", textDecoration: "none" }}>
+                  About Us
                 </Link>
               </li>
-            ))}
-          </ul>
-        </div>
+              <li style={{ marginBottom: "0.5rem" }}>
+                <Link to="/archive" style={{ color: "#B3B3B3", fontSize: "0.875rem", textDecoration: "none" }}>
+                  Archive
+                </Link>
+              </li>
+              <li style={{ marginBottom: "0.5rem" }}>
+                <Link to="/privacy-policy" style={{ color: "#B3B3B3", fontSize: "0.875rem", textDecoration: "none" }}>
+                  Privacy Policy
+                </Link>
+              </li>
+              <li style={{ marginBottom: "0.5rem" }}>
+                <Link to="/terms" style={{ color: "#B3B3B3", fontSize: "0.875rem", textDecoration: "none" }}>
+                  Terms of Service
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-        {/* Contact Information */}
-        <div>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "1rem" }}>Contact Us</h3>
-          <div style={{ marginBottom: "0.75rem", display: "flex", alignItems: "center" }}>
-            <MapPin size={16} style={{ marginRight: "0.75rem", flexShrink: 0 }} />
-            <span style={{ fontSize: "0.95rem", color: "#e2e8f0" }}>
-              AICTE Headquarters, Nelson Mandela Marg, New Delhi, 110070
-            </span>
+          {/* Disclaimer */}
+          <div>
+            <h4 style={{
+              fontSize: "0.875rem",
+              fontWeight: "600",
+              marginBottom: "1rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em"
+            }}>
+              Disclaimer
+            </h4>
+            <p style={{
+              fontSize: "0.8rem",
+              color: "#B3B3B3",
+              lineHeight: "1.6"
+            }}>
+              CollegeBuzz is not affiliated with AICTE or any government body.
+              This is an independent platform for educational information.
+            </p>
           </div>
-          <div style={{ marginBottom: "0.75rem", display: "flex", alignItems: "center" }}>
-            <Phone size={16} style={{ marginRight: "0.75rem", flexShrink: 0 }} />
-            <span style={{ fontSize: "0.95rem", color: "#e2e8f0" }}>
-              +91-11-2658-1000
-            </span>
-          </div>
-          <div style={{ marginBottom: "0.75rem", display: "flex", alignItems: "center" }}>
-            <Mail size={16} style={{ marginRight: "0.75rem", flexShrink: 0 }} />
-            <span style={{ fontSize: "0.95rem", color: "#e2e8f0" }}>
-              support@aictehub.ac.in
-            </span>
-          </div>
-          <div style={{ marginBottom: "0.75rem", display: "flex", alignItems: "center" }}>
-            <Globe size={16} style={{ marginRight: "0.75rem", flexShrink: 0 }} />
-            <span style={{ fontSize: "0.95rem", color: "#e2e8f0" }}>
-              www.aicte-india.org
-            </span>
-          </div>
-        </div>
-
-        {/* Social Media & Newsletter */}
-        <div>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "1rem" }}>Connect With Us</h3>
-          <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
-            <a href="#" style={{ color: "white", borderRadius: "50%", width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.1)" }}>
-              <Facebook size={18} />
-            </a>
-            <a href="#" style={{ color: "white", borderRadius: "50%", width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.1)" }}>
-              <Twitter size={18} />
-            </a>
-            <a href="#" style={{ color: "white", borderRadius: "50%", width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.1)" }}>
-              <Linkedin size={18} />
-            </a>
-            <a href="#" style={{ color: "white", borderRadius: "50%", width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.1)" }}>
-              <Instagram size={18} />
-            </a>
-          </div>
-          <NewsletterSubscribe />
         </div>
       </div>
 
-      {/* Copyright Section */}
+      {/* Bottom Bar */}
       <div style={{
-        borderTop: "1px solid rgba(255,255,255,0.2)",
-        marginTop: "2rem",
-        paddingTop: "1.5rem",
-        textAlign: "center",
-        fontSize: "0.9rem",
-        color: "#e2e8f0"
+        borderTop: "1px solid rgba(255,255,255,0.1)",
+        padding: "1.5rem",
+        textAlign: "center"
       }}>
-        <p>&copy; {new Date().getFullYear()} AICTE Central Hub. All rights reserved.</p>
-        <div style={{ marginTop: "0.5rem" }}>
-          <Link to="/privacy-policy" style={{ color: "#e2e8f0", marginRight: "1.5rem", textDecoration: "none" }}>Privacy Policy</Link>
-          <Link to="/terms" style={{ color: "#e2e8f0", marginRight: "1.5rem", textDecoration: "none" }}>Terms of Service</Link>
-          <Link to="/sitemap" style={{ color: "#e2e8f0", textDecoration: "none" }}>Sitemap</Link>
-        </div>
+        <p style={{
+          fontSize: "0.8rem",
+          color: "#B3B3B3",
+          margin: 0
+        }}>
+          © {new Date().getFullYear()} CollegeBuzz. All rights reserved.
+        </p>
       </div>
     </footer>
   );
