@@ -1,0 +1,20 @@
+# https://www.robotstxt.org/robotstxt.html
+# Robots.txt for AICTE Central Hub (CollegeBuzz)
+
+# Allow all web crawlers
+User-agent: *
+Allow: /
+
+# Specific crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Disallow admin and auth pages
+Disallow: /login
+Disallow: /register
+
+# Sitemap location
+Sitemap: https://college-buzz.vercel.app/sitemap.xml
