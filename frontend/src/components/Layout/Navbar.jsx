@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, X, Search, ChevronDown } from "lucide-react";
+import { Menu, X, Search, ChevronDown, Archive } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const categories = [
@@ -155,9 +155,28 @@ const Navbar = ({ setActiveTab }) => {
               </button>
 
               <Link
+                to="/archive"
+                style={{
+                  color: isActive("/archive") ? "#FFFFFF" : "#B3B3B3",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  padding: "0.5rem 0.75rem",
+                  borderRadius: "6px",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.25rem",
+                  transition: "color 0.15s ease"
+                }}
+              >
+                <Archive size={16} />
+                Archive
+              </Link>
+
+              <Link
                 to="/about"
                 style={{
-                  color: "#B3B3B3",
+                  color: isActive("/about") ? "#FFFFFF" : "#B3B3B3",
                   fontSize: "0.875rem",
                   fontWeight: "500",
                   padding: "0.5rem 0.75rem",
@@ -257,6 +276,23 @@ const Navbar = ({ setActiveTab }) => {
               {cat.name}
             </button>
           ))}
+          <Link
+            to="/archive"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              color: "#FFFFFF",
+              fontSize: "1rem",
+              padding: "0.75rem 0",
+              textDecoration: "none",
+              borderBottom: "1px solid rgba(255,255,255,0.1)"
+            }}
+          >
+            <Archive size={18} />
+            Archive
+          </Link>
           <Link
             to="/about"
             onClick={() => setIsMobileMenuOpen(false)}

@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { fetchActiveRecords } from "../services/apiServices.js";
 import Layout from "../components/Layout/Layout.jsx";
 import AnnouncementCard from "../components/common/AnnouncementCard.jsx";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Search, Filter, X } from "lucide-react";
 
 const categories = [
@@ -19,10 +19,11 @@ const categories = [
 const AnnouncementsPage = () => {
     const { tabName } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = useState(tabName || "news");
     const [announcements, setAnnouncements] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || "");
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
     // Sync tab with URL

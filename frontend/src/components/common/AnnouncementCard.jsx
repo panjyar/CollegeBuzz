@@ -1,5 +1,5 @@
-import React from "react";
-import { ExternalLink, Calendar, Building2 } from "lucide-react";
+import React, { useState } from "react";
+import { ExternalLink, Calendar } from "lucide-react";
 
 // Category badge colors
 const categoryColors = {
@@ -59,6 +59,124 @@ const getDate = (item) => {
     return item.published_date || item.crawled_at || item.last_updated_at;
 };
 
+// College domain to name mapping
+const collegeMapping = {
+    'iitdh.ac.in': 'IIT Dharwad',
+    'iitgoa.ac.in': 'IIT Goa',
+    'iitj.ac.in': 'IIT Jodhpur',
+    'iiti.ac.in': 'IIT Indore',
+    'iitbbs.ac.in': 'IIT Bhubaneswar',
+    'iitk.ac.in': 'IIT Kanpur',
+    'iitm.ac.in': 'IIT Madras',
+    'iitd.ac.in': 'IIT Delhi',
+    'iitb.ac.in': 'IIT Bombay',
+    'iitkgp.ac.in': 'IIT Kharagpur',
+    'iitr.ac.in': 'IIT Roorkee',
+    'iith.ac.in': 'IIT Hyderabad',
+    'iitg.ac.in': 'IIT Guwahati',
+    'iitp.ac.in': 'IIT Patna',
+    'iitmandi.ac.in': 'IIT Mandi',
+    'iitbhu.ac.in': 'IIT BHU',
+    'iitrpr.ac.in': 'IIT Ropar',
+    'iitpkd.ac.in': 'IIT Palakkad',
+    'iitjammu.ac.in': 'IIT Jammu',
+    'iitbhilai.ac.in': 'IIT Bhilai',
+    'iittirupati.ac.in': 'IIT Tirupati',
+    'cit.ac.in': 'CIT Kokrajhar',
+    'nitk.ac.in': 'NIT Karnataka',
+    'nitc.ac.in': 'NIT Calicut',
+    'nitt.edu': 'NIT Trichy',
+    'nitw.ac.in': 'NIT Warangal',
+};
+
+// Helper to extract college name from URL
+const getCollegeFromUrl = (url) => {
+    if (!url) return null;
+    try {
+        // Handle URLs that might not have protocol
+        const urlWithProtocol = url.startsWith('http') ? url : `https://${url}`;
+        const hostname = new URL(urlWithProtocol).hostname;
+
+        // Check direct mapping first
+        if (collegeMapping[hostname]) {
+            return collegeMapping[hostname];
+        }
+
+        // Check for partial match (e.g., www.iitdh.ac.in matches iitdh.ac.in)
+        for (const [domain, name] of Object.entries(collegeMapping)) {
+            if (hostname.endsWith(domain) || hostname.includes(domain.split('.')[0])) {
+                return name;
+            }
+        }
+
+        // Fallback: extract readable name from domain
+        const parts = hostname.replace('www.', '').split('.');
+        if (parts.length >= 2) {
+            const collegePart = parts[0].toUpperCase();
+            if (collegePart.length <= 6) {
+                return collegePart; // Short acronym like IIT, NIT, CIT
+            }
+            // Capitalize first letter for longer names
+            return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
+};
+
+// Helper to extract domain from URL (for favicon)
+const getDomainFromUrl = (url) => {
+    if (!url) return null;
+    try {
+        const urlWithProtocol = url.startsWith('http') ? url : `https://${url}`;
+        return new URL(urlWithProtocol).hostname;
+    } catch {
+        return null;
+    }
+};
+
+// College Logo component with fallback
+const CollegeLogo = ({ domain, size = 20 }) => {
+    const [hasError, setHasError] = useState(false);
+
+    if (!domain || hasError) {
+        // Fallback to initials
+        const initials = domain ? domain.split('.')[0].substring(0, 3).toUpperCase() : '?';
+        return (
+            <div style={{
+                width: size,
+                height: size,
+                borderRadius: '4px',
+                backgroundColor: '#F0F0F0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: size * 0.4,
+                fontWeight: '600',
+                color: '#666'
+            }}>
+                {initials}
+            </div>
+        );
+    }
+
+    return (
+        <img
+            src={`https://www.google.com/s2/favicons?domain=${domain}&sz=${size * 2}`}
+            alt=""
+            width={size}
+            height={size}
+            style={{
+                borderRadius: '4px',
+                objectFit: 'contain'
+            }}
+            onError={() => setHasError(true)}
+        />
+    );
+};
+
 const formatDate = (dateValue) => {
     if (!dateValue) return "Unknown date";
     try {
@@ -98,7 +216,8 @@ const AnnouncementCard = ({
     const title = getTitle(item, category);
     const sourceUrl = getSourceUrl(item, category);
     const displayDate = getDate(item);
-    const collegeName = item.college_name || item.college || null;
+    // Try to get college name from item, or extract from URL
+    const collegeName = item.college_name || item.college || getCollegeFromUrl(sourceUrl);
 
     const categoryStyle = categoryColors[category] || { bg: "#f3f4f6", color: "#666" };
 
@@ -189,10 +308,10 @@ const AnnouncementCard = ({
                 <div style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.35rem",
+                    gap: "0.5rem",
                     marginBottom: "0.75rem"
                 }}>
-                    <Building2 size={14} style={{ color: "#B3B3B3" }} />
+                    <CollegeLogo domain={getDomainFromUrl(sourceUrl)} size={18} />
                     <span style={{
                         fontSize: "0.8rem",
                         color: "#666666",
