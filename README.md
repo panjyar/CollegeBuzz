@@ -50,12 +50,7 @@ MONGODB_URI=mongodb://localhost:27017/CollegeBuzz
 JWT_SECRET_KEY=your_very_secure_secret_key
 ```
 
-### 5. Initialize admin user (optional)
-```bash
-python setup_admin.py
-```
-
-### 6. Run the backend server
+### 5. Run the backend server
 ```bash
 python app.py
 ```
